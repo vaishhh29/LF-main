@@ -7,11 +7,12 @@ import {
   TouchableOpacity,
   StatusBar,
   ScrollView,
+  Image,
 } from 'react-native';
-import { ChevronLeft, ChevronDown, ChevronUp } from 'lucide-react-native';
+import { ChevronDown, ChevronUp } from 'lucide-react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 const PrivacyPolicyScreen = ({ navigation }) => {
-  // State to manage which sections are expanded
   const [expandedSections, setExpandedSections] = useState({
     eligibility: true,
     cancellation: false,
@@ -19,7 +20,6 @@ const PrivacyPolicyScreen = ({ navigation }) => {
     mileage: false,
   });
 
-  // Toggle section expansion
   const toggleSection = (section) => {
     setExpandedSections((prev) => ({
       ...prev,
@@ -27,7 +27,6 @@ const PrivacyPolicyScreen = ({ navigation }) => {
     }));
   };
 
-  // Policy sections data
   const policySections = [
     {
       id: 'eligibility',
@@ -75,178 +74,159 @@ const PrivacyPolicyScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      {/* Status Bar */}
-      <View style={styles.statusBar}>
-        
-      </View>
-
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
         >
-          <ChevronLeft size={24} color="#000" />
+          <Image
+            source={require('./assets/back.png')}
+            style={styles.backIcon}
+          />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Privacy policy</Text>
+        <Text style={styles.headerTitle}>Privacy Policy</Text>
       </View>
 
-      {/* Scrollable Content */}
-      <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
+      {/* Content */}
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {policySections.map((section) => (
-          <View key={section.id} style={styles.sectionContainer}>
+          <View key={section.id} style={styles.card}>
             {/* Section Header */}
             <TouchableOpacity
               style={styles.sectionHeader}
               onPress={() => toggleSection(section.id)}
               activeOpacity={0.7}
             >
+              {/* Left Side: Gradient Dot + Title */}
               <View style={styles.sectionTitleContainer}>
-                <View style={styles.purpleDot} />
+                <LinearGradient
+                  colors={['#2133D6', '#7D21CF']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={styles.purpleDot}
+                />
                 <Text style={styles.sectionTitle}>{section.title}</Text>
               </View>
+
+              {/* Right Side: Arrow */}
               {expandedSections[section.id] ? (
-                <ChevronUp size={20} color="#9CA3AF" />
+                <ChevronUp size={18} color="#9CA3AF" />
               ) : (
-                <ChevronDown size={20} color="#9CA3AF" />
+                <ChevronDown size={18} color="#9CA3AF" />
               )}
             </TouchableOpacity>
 
-            {/* Section Content (Expandable) */}
+            {/* Section Content */}
             {expandedSections[section.id] && (
-              <View style={styles.sectionContent}>
-                {section.content.map((item, index) => (
-                  <View key={index} style={styles.contentItem}>
-                    <Text style={styles.bullet}>•</Text>
-                    <Text style={styles.contentText}>{item}</Text>
-                  </View>
-                ))}
-              </View>
+              <>
+                <View style={styles.hrLine} />
+                <View style={styles.sectionContent}>
+                  {section.content.map((item, index) => (
+                    <View key={index} style={styles.contentItem}>
+                      <Text style={styles.bullet}>•</Text>
+                      <Text style={styles.contentText}>{item}</Text>
+                    </View>
+                  ))}
+                </View>
+              </>
             )}
           </View>
         ))}
-
-        {/* Bottom Spacing */}
-        <View style={styles.bottomSpacing} />
+        <View style={{ height: 40 }} />
       </ScrollView>
     </SafeAreaView>
   );
 };
 
+export default PrivacyPolicyScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  statusBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  time: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: '#000',
-  },
-  statusIcons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  signalBars: {
-    flexDirection: 'row',
-    gap: 2,
-  },
-  bar: {
-    width: 2,
-    height: 8,
-    backgroundColor: '#000',
-    borderRadius: 2,
-  },
-  icon: {
-    fontSize: 14,
+    backgroundColor: 'white',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    paddingVertical: 30,
     backgroundColor: '#FFFFFF',
+    marginTop: 20,
   },
   backButton: {
-    marginRight: 16,
+    marginRight: 8,
+  },
+  backIcon: {
+    width: 22,
+    height: 22,
+    resizeMode: 'contain',
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: '600',
-    color: '#000',
+    color: '#111827',
+    marginLeft: 10,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 16,
+    padding: 16,
   },
-  sectionContainer: {
-    marginTop: 16,
+  card: {
     backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    paddingVertical: 14,
   },
   sectionTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
+    flexShrink: 1,
   },
   purpleDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#7C3AED',
-    marginRight: 12,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginRight: 10,
   },
   sectionTitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '500',
-    color: '#000',
-    flex: 1,
+    color: '#4D4D4D',
+    marginTop:5,
+    marginBottom:5
+  },
+  hrLine: {
+    height: 1,
+    backgroundColor: '#E5E7EB',
+    marginBottom: 8,
   },
   sectionContent: {
-    paddingTop: 16,
-    paddingBottom: 8,
-    paddingLeft: 20,
+    paddingBottom: 14,
   },
   contentItem: {
     flexDirection: 'row',
-    marginBottom: 12,
-    paddingRight: 8,
+    alignItems: 'flex-start',
+    marginBottom: 10,
+    marginLeft: 6,
   },
   bullet: {
-    fontSize: 14,
-    color: '#374151',
+    fontSize: 20,
+    color: '#4D4D4D',
     marginRight: 8,
-    marginTop: 2,
   },
   contentText: {
     flex: 1,
     fontSize: 14,
-    color: '#374151',
-    lineHeight: 20,
-  },
-  bottomSpacing: {
-    height: 40,
+    color: '#4D4D4D',
+    lineHeight: 26,
   },
 });
-
-export default PrivacyPolicyScreen

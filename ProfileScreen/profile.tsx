@@ -43,97 +43,89 @@ const MenuItem: React.FC<MenuItemProps> = ({
 }) => (
   <TouchableOpacity style={styles.menuItem} onPress={onPress} activeOpacity={0.7}>
     <View style={styles.menuLeft}>
-      <Image source={icon} style={styles.menuIcon} />
+      <View style={styles.iconWrapper}>
+  <Image source={icon} style={styles.menuIcon} />
+</View>
+
       <Text style={[styles.menuTitle, { color: textColor }]}>{title}</Text>
     </View>
-    {showArrow && <Text style={styles.arrow}>›</Text>}
+    {showArrow && <Image source={require('./assets/right-arrow.png')} style={styles.arrowIcon} />}
   </TouchableOpacity>
 );
 
 const ProfileScreen: React.FC = () => {
+  const navigation = useNavigation<NavigationProp>();
   const [whatsappEnabled, setWhatsappEnabled] = useState(true);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
   const translateX = useRef(new Animated.Value(whatsappEnabled ? 22 : 0)).current;
 
-  const [userProfile, setUserProfile] = useState({
+  const [userProfile] = useState({
     name: 'RUBIKA',
     phone: '+91 9361770066',
     image: require('./assets/user.png'),
   });
 
-  // Animate toggle switch
   useEffect(() => {
     Animated.timing(translateX, {
       toValue: whatsappEnabled ? 22 : 0,
       duration: 200,
       useNativeDriver: true,
     }).start();
-  }, [whatsappEnabled, translateX]);
+  }, [whatsappEnabled]);
 
   const handleLogout = () => setLogoutModalVisible(true);
-
   const confirmLogout = () => {
     setLogoutModalVisible(false);
     console.log('User logged out');
-    // Add your logout logic here
   };
 
-  const navigateTo = (screen: keyof RootStackParamList) => {
-    navigation.navigate(screen);
-  };
+  const navigateTo = (screen: keyof RootStackParamList) => navigation.navigate(screen);
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* ---------------------- */}
-        {/* Profile Card */}
-        {/* ---------------------- */}
-        <View style={styles.profileCard}>
-          <Image source={require('./assets/profile-bg.png')} style={styles.profileBg} />
-
-          <View style={styles.imageWrapper}>
-            <Image source={userProfile.image} style={styles.profileImage} />
-            <TouchableOpacity
-              style={styles.cameraButton}
-              onPress={() =>
-                navigation.navigate('EditProfileScreen', {
-                  name: userProfile.name,
-                  phone: userProfile.phone,
-                  image: userProfile.image,
-                })
-              }
-            >
-              <Image source={require('./assets/camera.png')} style={styles.cameraIcon} />
-            </TouchableOpacity>
+        {/* Header */}
+        <View style={styles.headerContainer}>
+          <Image source={require('./assets/profile-bg.png')} style={styles.headerBg} />
+          <View style={styles.profileInfo}>
+            <View style={styles.imageWrapper}>
+              <Image source={userProfile.image} style={styles.profileImage} />
+              <TouchableOpacity
+                style={styles.cameraButton}
+                onPress={() =>
+                  navigation.navigate('EditProfileScreen', {
+                    name: userProfile.name,
+                    phone: userProfile.phone,
+                    image: userProfile.image,
+                  })
+                }>
+                <Image source={require('./assets/camera.png')} style={styles.cameraIcon} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.nameWrapper}>
+              <Text style={styles.name}>{userProfile.name}</Text>
+              <Image source={require('./assets/pen.png')} style={styles.penIcon} />
+            </View>
+            <Text style={styles.phone}>{userProfile.phone}</Text>
           </View>
-
-          <View style={styles.nameWrapper}>
-            <Text style={styles.name}>{userProfile.name}</Text>
-            <Image source={require('./assets/pen.png')} style={styles.penIcon} />
-          </View>
-
-          <Text style={styles.phone}>{userProfile.phone}</Text>
         </View>
 
         {/* WhatsApp Card */}
         <View style={styles.whatsappCard}>
           <View style={styles.whatsappLeft}>
-            <Image
-              source={require('./assets/whatsapp.png')}
-              style={styles.whatsappIcon}
-              resizeMode="contain"
-            />
+            <Image source={require('./assets/whatsapp.png')} style={styles.whatsappIcon} />
             <View style={styles.whatsappTextContainer}>
-              <Text style={styles.whatsappTitle}>Get booking info on WhatsApp</Text>
+              <Text style={styles.whatsappTitle}>Get booking info on whatsapp</Text>
               <Text style={styles.whatsappSubtitle}>
-                Receive quick notifications about car bookings, renter details, and updates.
+                Receive quick notification on car bookings, renter details, ongoing, upcoming
+                related details on whatsapp
               </Text>
             </View>
           </View>
 
-          {/* Toggle Switch */}
-          <TouchableOpacity onPress={() => setWhatsappEnabled(!whatsappEnabled)} activeOpacity={0.8}>
+          {/* Toggle */}
+          <TouchableOpacity onPress={() => setWhatsappEnabled(!whatsappEnabled)}>
             <View style={[styles.toggleContainer, whatsappEnabled && styles.toggleActive]}>
               <Animated.View
                 style={[styles.toggleCircle, { transform: [{ translateX }] }]}
@@ -142,7 +134,7 @@ const ProfileScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        {/* ID Proofs Section */}
+        {/* ID Proofs */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>ID Proofs</Text>
           <MenuItem
@@ -152,7 +144,7 @@ const ProfileScreen: React.FC = () => {
           />
         </View>
 
-        {/* General Section */}
+        {/* General */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>General</Text>
           <MenuItem
@@ -183,11 +175,11 @@ const ProfileScreen: React.FC = () => {
           />
         </View>
 
-        {/* Support Section */}
+        {/* Support */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Support</Text>
           <MenuItem
-            icon={require('./assets/privacy.png')}
+            icon={require('./assets/policy.png')}
             title="Privacy Policy"
             onPress={() => navigateTo('PrivacyPolicy')}
           />
@@ -206,7 +198,7 @@ const ProfileScreen: React.FC = () => {
         </View>
       </ScrollView>
 
-      {/* Logout Confirmation Modal */}
+      {/* Logout Modal */}
       <Modal visible={logoutModalVisible} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -216,14 +208,12 @@ const ProfileScreen: React.FC = () => {
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => setLogoutModalVisible(false)}
-              >
+                onPress={() => setLogoutModalVisible(false)}>
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.modalButton, styles.logoutButton]}
-                onPress={confirmLogout}
-              >
+                onPress={confirmLogout}>
                 <Text style={styles.logoutButtonText}>Logout</Text>
               </TouchableOpacity>
             </View>
@@ -234,137 +224,78 @@ const ProfileScreen: React.FC = () => {
   );
 };
 
-// ----------------------
-// Styles
-// ----------------------
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  profileContainer: {
+  container: { flex: 1, backgroundColor: '#fff' },
+
+  headerContainer: { position: 'relative', height: 230,backgroundColor:'#2F1F5F' },
+  headerBg: { width: '100%', height: '100%', resizeMode: 'cover' },
+  profileInfo: {
+    position: 'absolute',
+    top: 60,
+    width: '100%',
     alignItems: 'center',
-    marginTop: 24,
-    marginBottom: 16,
   },
-  imageWrapper: {
-    position: 'relative',
-    marginBottom: 12,
-  },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-  },
+  imageWrapper: { position: 'relative' },
+  profileImage: { width: 80, height: 80, borderRadius: 40 },
   cameraButton: {
     position: 'absolute',
     bottom: 0,
     right: 0,
     backgroundColor: '#FFF',
-    width: 32,
-    height: 32,
     borderRadius: 16,
+    width: 28,
+    height: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
     elevation: 3,
   },
-  cameraIcon: {
-    width: 18,
-    height: 18,
-    tintColor: '#7C3AED',
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000',
-    marginBottom: 4,
-  },
-  phone: {
-    fontSize: 14,
-    color: '#666',
-  },
+  cameraIcon: { width: 16, height: 16, tintColor: '#7C3AED' },
+  nameWrapper: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
+  name: { fontSize: 18, fontWeight: '700', color: '#fff' },
+  penIcon: { width: 14, height: 14, tintColor: '#fff', marginLeft: 6 },
+  phone: { fontSize: 13, color: '#E5E5E5', marginTop: 4 },
+
   whatsappCard: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    margin: 16,
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    marginTop: 10,
     padding: 16,
    
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 2,
   },
-  whatsappLeft: {
-    flexDirection: 'row',
-    flex: 1,
-    marginRight: 12,
-  },
-  whatsappIcon: {
-    width: 32,
-    height: 32,
-    marginRight: 12,
-  },
-  whatsappTextContainer: {
-    flex: 1,
-  },
-  whatsappTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#000',
-    marginBottom: 4,
-  },
-  whatsappSubtitle: {
-    fontSize: 12,
-    color: '#666',
-    lineHeight: 16,
-  },
+  whatsappLeft: { flexDirection: 'row', flex: 1, alignItems: 'flex-start' },
+  whatsappIcon: { width: 32, height: 32, marginRight: 12 },
+  whatsappTextContainer: { flex: 1 },
+  whatsappTitle: { fontSize: 14, fontWeight: '700', color: '#000', marginBottom: 4 },
+  whatsappSubtitle: { fontSize: 12, color: '#666', lineHeight: 16 },
   toggleContainer: {
     width: 50,
     height: 28,
     borderRadius: 15,
     backgroundColor: '#D1D5DB',
     padding: 3,
-    justifyContent: 'center',
   },
-  toggleActive: {
-    backgroundColor: '#7C3AED',
-  },
+  toggleActive: { backgroundColor: '#7C3AED' },
   toggleCircle: {
     width: 22,
     height: 22,
     borderRadius: 11,
     backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
     elevation: 2,
   },
+
   section: {
-    marginTop: 8,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#fff',
     marginHorizontal: 16,
-    borderRadius: 12,
-    paddingVertical: 8,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 2,
+    marginTop: 10,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '700',
     color: '#000',
-    paddingHorizontal: 16,
     paddingVertical: 12,
+    paddingHorizontal: 16,
   },
   menuItem: {
     flexDirection: 'row',
@@ -373,25 +304,27 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 16,
   },
-  menuLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  menuIcon: {
-    width: 22,
-    height: 22,
-    marginRight: 12,
-    resizeMode: 'contain',
-  },
-  menuTitle: {
-    fontSize: 15,
-    color: '#000',
-  },
-  arrow: {
-    fontSize: 24,
-    color: '#999',
-  },
+  menuLeft: { flexDirection: 'row', alignItems: 'center', flex: 1 },
+ iconWrapper: {
+  width: 40,
+  height: 40,
+  borderRadius: 20, 
+  borderWidth: 1,
+  borderColor: '#D7D7D7', 
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: '#FFF',
+  marginRight: 12,
+},
+menuIcon: {
+  width: 20,
+  height: 20,
+  resizeMode: 'contain',
+},
+
+  menuTitle: { fontSize: 15, color: '#000' },
+  arrowIcon: { width: 16, height: 16, tintColor: '#767676' },
+
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
@@ -405,50 +338,15 @@ const styles = StyleSheet.create({
     padding: 24,
     alignItems: 'center',
   },
-  modalIcon: {
-    width: 40,
-    height: 40,
-    marginBottom: 12,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#000',
-    marginBottom: 8,
-  },
-  modalMessage: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    width: '100%',
-    gap: 12,
-  },
-  modalButton: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  cancelButton: {
-    backgroundColor: '#F3F4F6',
-  },
-  cancelButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#6B7280',
-  },
-  logoutButton: {
-    backgroundColor: '#7C3AED',
-  },
-  logoutButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFF',
-  },
+  modalIcon: { width: 40, height: 40, marginBottom: 12 },
+  modalTitle: { fontSize: 18, fontWeight: '700', color: '#000', marginBottom: 8 },
+  modalMessage: { fontSize: 14, color: '#666', textAlign: 'center', marginBottom: 20 },
+  modalButtons: { flexDirection: 'row', width: '100%', gap: 12 },
+  modalButton: { flex: 1, paddingVertical: 12, borderRadius: 8, alignItems: 'center' },
+  cancelButton: { backgroundColor: '#F3F4F6' },
+  cancelButtonText: { fontSize: 14, fontWeight: '600', color: '#6B7280' },
+  logoutButton: { backgroundColor: '#7C3AED' },
+  logoutButtonText: { fontSize: 14, fontWeight: '600', color: '#FFF' },
 });
 
 export default ProfileScreen;

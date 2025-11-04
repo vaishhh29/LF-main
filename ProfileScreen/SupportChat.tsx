@@ -8,10 +8,12 @@ import {
   Image,
   SafeAreaView,
 } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 
 export default function SupportChat() {
-  const [messages, setMessages] = useState([
+  const navigation = useNavigation();
+  const [messages] = useState([
     {
       id: 1,
       type: 'bot',
@@ -19,7 +21,7 @@ export default function SupportChat() {
       subtext: 'Please select an option',
       options: [
         'I have a question about a booking',
-        'I want to know about the tea-fleet services',
+        'I want to know about the lea-flexi services',
       ],
     },
     {
@@ -30,31 +32,22 @@ export default function SupportChat() {
     {
       id: 3,
       type: 'bot',
-      text: 'You spent ₹540 today.',
-      subtext: 'Would you like to see a detailed report?',
-      options: ['Yes, show me', 'No, thanks'],
+      text: 'Hello, How can I help you?',
+      subtext: 'Please select an option',
+      options: [
+        'I have a question about a booking',
+        'I want to know about the lea-flexi services',
+      ],
     },
   ]);
 
   const handleOptionClick = (option) => {
     console.log('Selected option:', option);
   };
-  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Removed extra top "Support Chat" section */}
-
-      {/* Header */}
-      {/* <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
-          <Image
-            source={require('./assets/chevron-left.png')}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Help & Support</Text>
-      </View> */}
+      
 
       {/* Action Buttons */}
       <View style={styles.actionsContainer}>
@@ -68,7 +61,9 @@ export default function SupportChat() {
           <Text style={styles.actionText}>Send us an Email</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionButton}  onPress={() => navigation.navigate('FAQ')}>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => navigation.navigate('FAQ')}>
           <View style={styles.iconCircle}>
             <Image
               source={require('./assets/faq.png')}
@@ -79,9 +74,13 @@ export default function SupportChat() {
         </TouchableOpacity>
       </View>
 
-      {/* Chat Messages */}
+      {/* Chat Section */}
       <ScrollView style={styles.chatContainer} showsVerticalScrollIndicator={false}>
-        <Text style={styles.dateLabel}>Today</Text>
+        <View style={styles.todayContainer}>
+          <View style={styles.line} />
+          <Text style={styles.todayText}>Today</Text>
+          <View style={styles.line} />
+        </View>
 
         {messages.map((message) => (
           <View key={message.id} style={styles.messageWrapper}>
@@ -89,9 +88,13 @@ export default function SupportChat() {
               <View style={styles.botMessageContainer}>
                 <Image source={require('./assets/bot.png')} style={styles.avatar} />
                 <View style={styles.botContent}>
-                  <Text style={styles.botText}>{message.text}</Text>
+                  <View style={styles.botBubble}>
+                    <Text style={styles.botText}>{message.text}</Text>
+                  </View>
                   {message.subtext && (
-                    <Text style={styles.botSubtext}>{message.subtext}</Text>
+                    <View style={styles.botBubble}>
+                      <Text style={styles.botSubtext}>{message.subtext}</Text>
+                    </View>
                   )}
                   {message.options && (
                     <View style={styles.optionsContainer}>
@@ -128,50 +131,37 @@ export default function SupportChat() {
   );
 }
 
+// --------------------- STYLES ---------------------
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: '#3b82f6',
-    padding: 12,
-  },
   backButton: {
     padding: 4,
-  },
-  backIcon: {
-    width: 20,
-    height: 20,
-    tintColor: '#111',
-    resizeMode: 'contain',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginLeft: 10,
   },
   actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: '#f9fafb',
     paddingVertical: 16,
+    paddingHorizontal: 10,
+    marginTop:10
   },
   actionButton: {
     width: '45%',
     alignItems: 'center',
     backgroundColor: '#F1EDFC',
-    paddingVertical: 14,
-    borderRadius: 10,
+    paddingVertical: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
     elevation: 2,
   },
   iconCircle: {
-    width: 42,
-    height: 42,
-  
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 6,
@@ -179,25 +169,55 @@ const styles = StyleSheet.create({
   actionIcon: {
     width: 22,
     height: 22,
-    tintColor: '#666',
     resizeMode: 'contain',
+    tintColor: '#000000',
   },
   actionText: {
-    fontSize: 12,
-    color: '#374151',
+    fontSize: 13,
+    color: '#000000',
     textAlign: 'center',
+    fontWeight: '500',
   },
+
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    backgroundColor: '#fff',
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+    color: '#000',
+  },
+
   chatContainer: {
     flex: 1,
     paddingHorizontal: 16,
     backgroundColor: '#fff',
+    marginTop:20
   },
-  dateLabel: {
-    textAlign: 'center',
-    fontSize: 12,
-    color: '#6b7280',
-    marginVertical: 12,
+
+  todayContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 25,
+
   },
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#CCCCCC',
+  },
+  todayText: {
+    marginHorizontal: 10,
+    color: '#000000',
+    fontSize: 14,
+  },
+
   messageWrapper: {
     marginBottom: 20,
   },
@@ -210,38 +230,50 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'flex-end',
   },
+
   botContent: {
     flex: 1,
     marginLeft: 8,
   },
+
+  botBubble: {
+    backgroundColor: '#F6F6F6',
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginBottom: 6,
+    maxWidth: '75%',
+  },
   botText: {
     fontSize: 14,
     color: '#1f2937',
-    marginBottom: 4,
   },
   botSubtext: {
-    fontSize: 12,
-    color: '#6b7280',
-    marginBottom: 8,
+    fontSize: 13,
+    color: '#1f2937',
   },
+
   optionsContainer: {
     flexDirection: 'column',
-    gap: 8,
+    marginTop: 8,
   },
   optionButton: {
-    backgroundColor: '#ede9fe',
-    borderRadius: 8,
+    backgroundColor: '#D3C7F6',
+    borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 14,
     marginVertical: 4,
+    alignSelf: 'flex-start',
   },
   optionText: {
-    color: '#5b21b6',
-    fontSize: 14,
+    color: '#2E1065',
+    fontSize: 13,
+    fontWeight: '500',
   },
+
   userBubble: {
-    backgroundColor: '#f3f4f6',
-    borderRadius: 10,
+    backgroundColor: '#F1EDFC',
+    borderRadius: 12,
     paddingVertical: 10,
     paddingHorizontal: 14,
     maxWidth: '75%',
@@ -250,13 +282,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#1f2937',
   },
+
   avatar: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#e5e7eb',
     marginHorizontal: 6,
   },
+
   bottomIndicator: {
     alignItems: 'center',
     paddingVertical: 8,

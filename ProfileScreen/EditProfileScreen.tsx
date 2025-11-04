@@ -34,37 +34,62 @@ const EditProfileScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Image
+            source={require('./assets/back.png')} 
+            style={styles.backIcon}
+          />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Profile</Text>
+      </View>
+
       <View style={styles.content}>
         {/* Profile Image */}
         <TouchableOpacity style={styles.imageWrapper}>
           <Image source={image} style={styles.profileImage} />
-          <View style={styles.editIconContainer}>
-            <Image source={require('./assets/user.png')} style={styles.editIcon} />
+          <View style={styles.cameraButton}>
+            <Image source={require('./assets/camera.png')} style={styles.cameraIcon} />
           </View>
         </TouchableOpacity>
 
         {/* Form */}
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Full Name</Text>
-          <TextInput
-            value={name}
-            onChangeText={setName}
-            placeholder="Enter your name"
-            style={styles.input}
-          />
+        <View style={styles.form}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Name</Text>
+            <TextInput
+              value={name}
+              onChangeText={setName}
+              placeholder="Rubika"
+              style={styles.input}
+              placeholderTextColor="#9CA3AF"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Mobile no.</Text>
+            <TextInput
+              value={phone}
+              onChangeText={setPhone}
+              placeholder="+91 454584..."
+              style={styles.input}
+              keyboardType="phone-pad"
+              placeholderTextColor="#9CA3AF"
+            />
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Email ID</Text>
+            <TextInput
+              placeholder="rubika@gmail.com"
+              style={styles.input}
+              placeholderTextColor="#9CA3AF"
+            />
+          </View>
         </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Phone Number</Text>
-          <TextInput
-            value={phone}
-            onChangeText={setPhone}
-            placeholder="Enter phone number"
-            style={styles.input}
-            keyboardType="phone-pad"
-          />
-        </View>
-
+        {/* Save Button */}
         <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
           <Text style={styles.saveText}>Save Changes</Text>
         </TouchableOpacity>
@@ -76,41 +101,85 @@ const EditProfileScreen: React.FC = () => {
 export default EditProfileScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F9FAFB' },
-  content: { padding: 20, alignItems: 'center' },
-  imageWrapper: { position: 'relative', marginBottom: 24 },
-  profileImage: { width: 110, height: 110, borderRadius: 55 },
-  editIconContainer: {
+  container: { flex: 1, backgroundColor: '#FFF' },
+
+  
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 35,
+    paddingBottom: 8,
+  },
+  backButton: {
+    padding: 11,
+  },
+  backIcon: {
+    width: 23,
+    height: 25,
+    tintColor: '#000',
+    
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#111827',
+    marginLeft: 10,
+  },
+
+  // Main content
+  content: { flex: 1, alignItems: 'center', padding: 24, marginTop:5 },
+
+  // Profile image section
+  imageWrapper: {
+    position: 'relative',
+    marginTop: 20,
+    marginBottom: 36,
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  cameraButton: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: '#7C3AED',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
     width: 32,
     height: 32,
-    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
+    elevation: 2,
   },
-  editIcon: { width: 18, height: 18, tintColor: '#FFF' },
-  inputGroup: { width: '100%', marginBottom: 16 },
-  label: { fontSize: 14, color: '#555', marginBottom: 6 },
+  cameraIcon: { width: 18, height: 18, tintColor: '#6B7280' },
+
+  // Form fields
+  form: { width: '100%' },
+  inputGroup: { marginBottom: 20 },
+  label: { fontSize: 15, color: '#262422', marginBottom: 8, fontWeight: '400' },
   input: {
-    backgroundColor: '#FFF',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
     fontSize: 16,
+    color: '#ABABAB',
+    backgroundColor: '#FFF',
   },
+
+  // Save button
   saveButton: {
     backgroundColor: '#7C3AED',
     borderRadius: 10,
     paddingVertical: 14,
-    paddingHorizontal: 20,
-    marginTop: 20,
     width: '100%',
     alignItems: 'center',
+    marginTop: 20,
   },
   saveText: { color: '#FFF', fontSize: 16, fontWeight: '600' },
 });

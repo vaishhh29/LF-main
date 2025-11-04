@@ -15,7 +15,7 @@ import OTPScreen from './Onboarding screens/OTPScreen';
 
 // --- Host Registration Screens ---
 import BecomeHostScreen from './Onboarding screens/BecomeHostScreen';
-import CarDetailsScreen from './Onboarding screens/CarDetailsScreen';
+import CarDetailsListScreen from './Onboarding screens/CarDetailsScreen';
 import CarListDetailsScreen from './Earning/CarListDetailsScreen';
 import CarImageUploadScreen from './Onboarding screens/CarImageUploadScreen';
 import PersonalDetailsScreen from './Onboarding screens/PersonalDetailsScreen';
@@ -54,6 +54,8 @@ import DriverScreen from './ProfileScreen/DriverScreen';
 import SupportChat from './ProfileScreen/SupportChat';
 import EditProfileScreen from './ProfileScreen/EditProfileScreen';
 import CarListingScreen from './Earning/CarListingScreen';
+import CarDetailsScreen from './Completed screens/CarDetailsScreen';
+// import CarDetailListingScreen from './Earning/CarDetailListingScreen';
 // --- Stack & Tab Navigators ---
 const RootStack = createNativeStackNavigator();
 const OnboardingStackNav = createNativeStackNavigator();
@@ -239,6 +241,14 @@ const App = () => {
               animation: 'slide_from_right',
             }}
           />
+           {/*<RootStack.Screen 
+            name="CarDetail" 
+            component={CarDetailListingScreen} 
+            options={{
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />*/}
           <RootStack.Screen 
           name="CarCard" 
           component={CarListingScreen} 
@@ -339,7 +349,7 @@ const App = () => {
             options={{ 
               presentation: 'card', 
               headerShown: true, 
-              title: 'Support Chat',
+              title: 'Help & Support',
               animation: 'slide_from_right',
             }} 
           />

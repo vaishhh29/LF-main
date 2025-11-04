@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-export default function CarDetailsScreen() {
+export default function CarDetailsListScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const { carId } = route.params || {};
@@ -52,7 +52,7 @@ export default function CarDetailsScreen() {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Car details</Text>
         <TouchableOpacity style={styles.moreBtn}>
-          <Image source={require('./assets/more-vertical.png')} style={styles.moreIcon} />
+       { /*  <Image source={require('./assets/more-vertical.png')} style={styles.moreIcon} /> */}
         </TouchableOpacity>
       </View>
 
@@ -63,7 +63,7 @@ export default function CarDetailsScreen() {
           <View style={styles.carHeaderInfo}>
             <Text style={styles.carHeaderName}>{carDetails.name}</Text>
             <View style={styles.carHeaderId}>
-              <Image source={require('./assets/id-icon.png')} style={styles.idIcon} />
+              {/*<Image source={require('./assets/id-icon.png')} style={styles.idIcon} />*/}
               <Text style={styles.carHeaderIdText}>{carDetails.id}</Text>
             </View>
           </View>
@@ -72,12 +72,12 @@ export default function CarDetailsScreen() {
         {/* Bookings and Earnings */}
         <TouchableOpacity style={styles.infoRow}>
           <Text style={styles.infoLabel}>Bookings : {carDetails.bookings}</Text>
-          <Image source={require('./assets/chevron-right.png')} style={styles.chevronIcon} />
+          {/*<Image source={require('./assets/chevron-right.png')} style={styles.chevronIcon} />*/}
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.infoRow}>
           <Text style={styles.infoLabel}>Earnings : ₹ {carDetails.earnings}</Text>
-          <Image source={require('./assets/chevron-right.png')} style={styles.chevronIcon} />
+          {/*<Image source={require('./assets/chevron-right.png')} style={styles.chevronIcon} />*/}
         </TouchableOpacity>
 
         {/* About Car */}
@@ -89,7 +89,7 @@ export default function CarDetailsScreen() {
         {/* Charge */}
         <View style={styles.chargeRow}>
           <Text style={styles.chargeLabel}>
-            Charge <Image source={require('./assets/zap.png')} style={styles.zapIcon} />
+            Charge {/*<Image source={require('./assets/zap.png')} style={styles.zapIcon} />*/}
           </Text>
           <View style={styles.chargeValue}>
             <Text style={styles.chargePrice}>₹ {carDetails.charge}</Text>
@@ -153,7 +153,7 @@ export default function CarDetailsScreen() {
             {carDetails.safety.map((item, idx) => (
               <View key={idx} style={styles.featureBox}>
                 <Image 
-                  source={require('./assets/airbag.png')} 
+                 {/* source={require('./assets/airbag.png')} */}
                   style={styles.featureIcon} 
                 />
                 <Text style={styles.featureText}>{item}</Text>
@@ -169,7 +169,7 @@ export default function CarDetailsScreen() {
             {carDetails.driving.map((item, idx) => (
               <View key={idx} style={styles.featureBox}>
                 <Image 
-                  source={require('./assets/voice.png')} 
+                 {/* source={require('./assets/voice.png')} */}
                   style={styles.featureIcon} 
                 />
                 <Text style={styles.featureText}>{item}</Text>
@@ -185,7 +185,7 @@ export default function CarDetailsScreen() {
             {carDetails.entertainment.map((item, idx) => (
               <View key={idx} style={styles.featureBox}>
                 <Image 
-                  source={require('./assets/radio.png')} 
+                 {/* source={require('./assets/radio.png')} */}
                   style={styles.featureIcon} 
                 />
                 <Text style={styles.featureText}>{item}</Text>
