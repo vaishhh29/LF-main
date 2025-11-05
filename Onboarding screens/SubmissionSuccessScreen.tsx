@@ -1,124 +1,96 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  SafeAreaView,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
+import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
-
-const SubmissionSuccessScreen = ({ navigation }: any) => {
-  const handleGoHome = () => {
-     navigation.reset({
-      index: 0,
-      routes: [{ name: 'MainTabs' }],
-    }); // Adjust route name
-  };
-
-  const handleViewListing = () => {
-    navigation.navigate('CarCard'); // Adjust route name
-  };
-
+const FinalPage = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        {/* Check Icon */}
-       <Image
-          source={require('./assets/tick.png')} // Replace with your actual image path
-          style={styles.image}
-          resizeMode="contain"
-        />
+    <View style={styles.container}>
 
-        {/* Title and message */}
-        <Text style={styles.title}>
-          Thank you for submitting your car details.
-        </Text>
-        <Text style={styles.subtitle}>
-          Your form is under review. We will get back to you
-        </Text>
+      <Image
+        source={require('./assets/Group.png')}
+        style={styles.checkIcon}
+        resizeMode="contain"
+      />
 
-        {/* Image */}
-        <Image
-          source={require('./assets/Carpool.png')} // Replace with your actual image path
-          style={styles.image}
-          resizeMode="contain"
-        />
+      <Text style={styles.text}>
+        Thank you for submitting your car details. Your form is under review. We will get back to you.
+      </Text>
+      
+      <FastImage
+        source={require('./assets/car.gif')}
+        style={styles.image}
+        resizeMode={FastImage.resizeMode.contain}
+      />
 
-        {/* Buttons */}
-        <TouchableOpacity style={styles.outlinedButton} onPress={handleGoHome}>
-          <Text style={styles.outlinedButtonText}>Go to home</Text>
-        </TouchableOpacity>
+      <TouchableOpacity style={styles.goHomeButton}>
+        <Text style={styles.goHomeText}>Go to home</Text>
+      </TouchableOpacity>
 
-        <TouchableOpacity style={styles.filledButton} onPress={handleViewListing}>
-          <Text style={styles.filledButtonText}>View my listing</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+      <TouchableOpacity style={styles.viewListingButton}>
+        <Text style={styles.viewListingText}>View my listing</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
+
+export default FinalPage;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  content: {
     alignItems: 'center',
-    padding: 24,
-    flex: 1,
     justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 40,
   },
-  iconContainer: {
-    marginBottom: 24,
+  checkIcon: {
+    width: 80,
+    height: 80,
+    marginBottom: 30,
   },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
+  text: {
     textAlign: 'center',
-    marginBottom: 4,
-    color: '#111827',
-  },
-  subtitle: {
-    fontSize: 14,
-    textAlign: 'center',
-    color: '#6b7280',
-    marginBottom: 24,
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 40,
+    lineHeight: 22,
+    fontWeight: '500',
   },
   image: {
     width: '100%',
-    height: 200,
-    marginBottom: 40,
+    height: 220,
+    marginBottom: 70,
   },
-  outlinedButton: {
-    width: '100%',
+  goHomeButton: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: '#ccc',
+    borderRadius: 12,
     paddingVertical: 14,
-    borderRadius: 6,
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  outlinedButtonText: {
-    color: '#111827',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  filledButton: {
     width: '100%',
-    backgroundColor: '#7e22ce',
-    paddingVertical: 14,
-    borderRadius: 6,
     alignItems: 'center',
+    marginBottom: 15,
   },
-  filledButtonText: {
-    color: '#fff',
+  goHomeText: {
     fontSize: 16,
+    color: '#333',
     fontWeight: '600',
   },
-  
+  viewListingButton: {
+    backgroundColor: '#7A3EFF',
+    borderRadius: 12,
+    paddingVertical: 14,
+    width: '100%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  viewListingText: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: '600',
+  },
 });
-
-export default SubmissionSuccessScreen;
-

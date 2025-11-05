@@ -1,428 +1,352 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
+  SafeAreaView,
   View,
   Text,
-  Image,
+  TextInput,
   TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
   StyleSheet,
+  Image,
+  ScrollView,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
-export default function CarDetailsListScreen() {
-  const navigation = useNavigation();
-  const route = useRoute();
-  const { carId } = route.params || {};
+// Step titles
+const steps = ['Personal', 'ID Proof', 'Car Image', 'Car Details'];
 
-  // Mock car data - replace with actual data fetch based on carId
-  const carDetails = {
-    id: 'LF234546789',
-    name: 'Toyota Corolla',
-    image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1200&q=80',
-    bookings: 2,
-    earnings: 2000,
-    aboutCar: 'Hey there.This car is my swift and it\'s absolutely the best car that I have driven so far. Better car than my swift.',
-    charge: 200,
-    licenseNumber: 'DL04AN1234',
-    rcBook: 'https://via.placeholder.com/80x60',
-    carColor: '#7C3AED',
-    carRegistration: '2017',
-    fastTagEnabled: 'Yes',
-    homeDeliveryServices: 'Yes',
-    carImages: [
-      'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&q=80',
-      'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=400&q=80',
-      'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&q=80',
-      'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=400&q=80',
-      'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&q=80',
-      'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=400&q=80',
-    ],
-    safety: ['Air bags', 'Child Seats'],
-    driving: ['Voice Assist'],
-    entertainment: ['FM Radio', 'Youtube'],
+// Car features data
+const safetyFeatures = [
+  { id: 1, name: 'Front Airbags', icon: require('./assets/airbag.png') },
+  { id: 2, name: 'Side Airbags', icon: require('./assets/airbag.png') },
+  { id: 3, name: 'Back Airbags', icon: require('./assets/airbag.png') },
+  { id: 3, name: 'Side Airbags', icon: require('./assets/airbag.png') },
+  { id: 4, name: 'Ventilated Seats', icon: require('./assets/venti.png') },
+  { id: 5, name: '360 View Camera', icon: require('./assets/camera.png') },
+];
+
+const drivingFeatures = [
+  { id: 6, name: 'Keyless Entry', icon: require('./assets/airbag.png') },
+  { id: 7, name: 'Spacious Interiors', icon: require('./assets/venti.png') },
+  { id: 8, name: 'Parking Assist', icon: require('./assets/parking.png') },
+  { id: 9, name: 'Voice Control', icon: require('./assets/voice.png') },
+  { id: 9, name: 'Repair', icon: require('./assets/repair.png') },
+  { id: 10, name: 'Power Steering', icon: require('./assets/powerString.png') },
+];
+
+const entertainmentFeatures = [
+  { id: 11, name: 'Music System', icon: require('./assets/music.png') },
+  { id: 12, name: 'Wifi Connect', icon: require('./assets/wifi.png') },
+];
+
+const CarFormScreen = () => {
+  const [description, setDescription] = useState(
+    'Hey there,\nThis car is my Swift and it’s absolutely the best. You won’t find comfort in any other car than my Swift.'
+  );
+  const [fastag, setFastag] = useState('Yes');
+  const [delivery, setDelivery] = useState('Yes');
+  const [selected, setSelected] = useState<number[]>([]);
+  const currentStep = 3; // Car Image step
+  const maxLength = 200;
+
+    const navigation = useNavigation();
+
+  const toggleSelect = (id: number) => {
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
   };
 
+  const renderFeatureGrid = (title: string, features: any[]) => (
+    <View style={{ marginTop: 25 }}>
+      <Text style={styles.sectionSubTitle}>{title}</Text>
+      <View style={styles.grid}>
+        {features.map((feature) => (
+          <TouchableOpacity
+            key={feature.id}
+            style={[styles.card, selected.includes(feature.id) && styles.selectedCard]}
+            onPress={() => toggleSelect(feature.id)}>
+            <Image source={feature.icon} style={styles.icon} />
+            <Text style={styles.cardText}>{feature.name}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
+
   return (
-    <SafeAreaView style={styles.screen}>
+    <SafeAreaView style={styles.safeArea}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Image source={require('./assets/back.png')} style={styles.backIcon} />
+        <TouchableOpacity onPress={() => console.log('Back pressed')}>
+          <Image source={require('./assets/back.png')} style={styles.iconSmall} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Car details</Text>
-        <TouchableOpacity style={styles.moreBtn}>
-       { /*  <Image source={require('./assets/more-vertical.png')} style={styles.moreIcon} /> */}
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={() => console.log('Save & Exit pressed')}>
+          <Text style={styles.saveText}>SAVE & EXIT</Text>
         </TouchableOpacity>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        {/* Car Header Card */}
-        <View style={styles.carHeaderCard}>
-          <Image source={{ uri: carDetails.image }} style={styles.carHeaderImage} />
-          <View style={styles.carHeaderInfo}>
-            <Text style={styles.carHeaderName}>{carDetails.name}</Text>
-            <View style={styles.carHeaderId}>
-              {/*<Image source={require('./assets/id-icon.png')} style={styles.idIcon} />*/}
-              <Text style={styles.carHeaderIdText}>{carDetails.id}</Text>
-            </View>
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+        {/* Step Progress Bar */}
+        <View style={styles.stepCard}>
+          <View style={styles.stepContainer}>
+            {steps.map((label, index) => {
+              const isCompleted = index < currentStep - 1;
+              const isActive = index === currentStep - 1;
+
+              return (
+                <View key={index} style={styles.stepItem}>
+                  <Text
+                    style={[
+                      styles.stepLabel,
+                      (isCompleted || isActive) && styles.stepLabelActive,
+                    ]}>
+                    {label}
+                  </Text>
+                  <View style={styles.stepRow}>
+                    <View
+                      style={[
+                        styles.stepIconContainer,
+                        isActive && styles.stepIconContainer,
+                        isCompleted && styles.completedStepIconContainer,
+                      ]}>
+                      <Image
+                        source={require('./assets/Icon.png')}
+                      />
+                    </View>
+
+                    {index < steps.length - 1 && (
+                      <View
+                        style={[
+                          styles.stepLine,
+                          {
+                            backgroundColor:
+                              index < currentStep - 1 ? '#7A3EFF' : '#E8E8F8',
+                          },
+                        ]}
+                      />
+                    )}
+                  </View>
+                </View>
+              );
+            })}
           </View>
         </View>
 
-        {/* Bookings and Earnings */}
-        <TouchableOpacity style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Bookings : {carDetails.bookings}</Text>
-          {/*<Image source={require('./assets/chevron-right.png')} style={styles.chevronIcon} />*/}
+        {/* Description */}
+        <Text style={styles.title}>Add car description & features</Text>
+        <Text style={styles.label}>Tell us about your car</Text>
+        <View style={styles.textBox}>
+          <TextInput
+            style={styles.input}
+            multiline
+            maxLength={maxLength}
+            value={description}
+            onChangeText={setDescription}
+          />
+        </View>
+        <Text style={styles.counterText}>
+          {description.length}/{maxLength}
+        </Text>
+
+        {/* FASTag */}
+        <Text style={styles.labelBelow}>FASTag Enabled</Text>
+        <View style={styles.radioRow}>
+          {['Yes', 'No'].map((option) => (
+            <TouchableOpacity
+              key={option}
+              style={styles.radioOption}
+              onPress={() => setFastag(option)}>
+              <View style={[styles.radioCircle, fastag === option && styles.radioSelected]}>
+                {fastag === option && <View style={styles.radioDot} />}
+              </View>
+              <Text style={styles.radioLabel}>{option}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Delivery */}
+        <Text style={styles.labelBelow}>Do you offer home delivery services?</Text>
+        <View style={styles.radioRow}>
+          {['Yes', 'No'].map((option) => (
+            <TouchableOpacity
+              key={option}
+              style={styles.radioOption}
+              onPress={() => setDelivery(option)}>
+              <View
+                style={[styles.radioCircle, delivery === option && styles.radioSelected]}>
+                {delivery === option && <View style={styles.radioDot} />}
+              </View>
+              <Text style={styles.radioLabel}>{option}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Features */}
+        <Text style={styles.label1}>Select Car Features</Text>
+        <Text style={styles.label2}>Choose maximum 10 car features</Text>
+
+        {renderFeatureGrid('SAFETY', safetyFeatures)}
+        {renderFeatureGrid('DRIVING', drivingFeatures)}
+        {renderFeatureGrid('ENTERTAINMENT', entertainmentFeatures)}
+
+        {/* Continue Button */}
+        <TouchableOpacity
+          style={styles.continueButton}
+          onPress={() => navigation.navigate('SubmissionSuccess' as never)}>
+          <Text style={styles.continueText}>CONTINUE</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Earnings : ₹ {carDetails.earnings}</Text>
-          {/*<Image source={require('./assets/chevron-right.png')} style={styles.chevronIcon} />*/}
-        </TouchableOpacity>
-
-        {/* About Car */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>About car</Text>
-          <Text style={styles.aboutText}>{carDetails.aboutCar}</Text>
-        </View>
-
-        {/* Charge */}
-        <View style={styles.chargeRow}>
-          <Text style={styles.chargeLabel}>
-            Charge {/*<Image source={require('./assets/zap.png')} style={styles.zapIcon} />*/}
-          </Text>
-          <View style={styles.chargeValue}>
-            <Text style={styles.chargePrice}>₹ {carDetails.charge}</Text>
-            <Text style={styles.chargeUnit}> / hour </Text>
-            <View style={styles.rentBadge}>
-              <Text style={styles.rentText}>• On Rent</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* License Number */}
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>License number</Text>
-          <Text style={styles.detailValue}>{carDetails.licenseNumber}</Text>
-        </View>
-
-        {/* RC Book */}
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>RC Book</Text>
-          <Image source={{ uri: carDetails.rcBook }} style={styles.rcImage} />
-        </View>
-
-        {/* Car Color */}
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Car color</Text>
-          <View style={[styles.colorCircle, { backgroundColor: carDetails.carColor }]} />
-        </View>
-
-        {/* Car Registration */}
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Car registration</Text>
-          <Text style={styles.detailValue}>{carDetails.carRegistration}</Text>
-        </View>
-
-        {/* FASTag Enabled */}
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>FASTag Enabled</Text>
-          <Text style={styles.detailValue}>{carDetails.fastTagEnabled}</Text>
-        </View>
-
-        {/* Home Delivery Services */}
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>Home delivery services?</Text>
-          <Text style={styles.detailValue}>{carDetails.homeDeliveryServices}</Text>
-        </View>
-
-        {/* Car Images */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Car Images</Text>
-          <View style={styles.imagesGrid}>
-            {carDetails.carImages.map((img, idx) => (
-              <Image key={idx} source={{ uri: img }} style={styles.gridImage} />
-            ))}
-          </View>
-        </View>
-
-        {/* Safety */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Safety</Text>
-          <View style={styles.featuresRow}>
-            {carDetails.safety.map((item, idx) => (
-              <View key={idx} style={styles.featureBox}>
-                <Image 
-                 {/* source={require('./assets/airbag.png')} */}
-                  style={styles.featureIcon} 
-                />
-                <Text style={styles.featureText}>{item}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* Driving */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Driving</Text>
-          <View style={styles.featuresRow}>
-            {carDetails.driving.map((item, idx) => (
-              <View key={idx} style={styles.featureBox}>
-                <Image 
-                 {/* source={require('./assets/voice.png')} */}
-                  style={styles.featureIcon} 
-                />
-                <Text style={styles.featureText}>{item}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* Entertainment */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Entertainment</Text>
-          <View style={styles.featuresRow}>
-            {carDetails.entertainment.map((item, idx) => (
-              <View key={idx} style={styles.featureBox}>
-                <Image 
-                 {/* source={require('./assets/radio.png')} */}
-                  style={styles.featureIcon} 
-                />
-                <Text style={styles.featureText}>{item}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        <View style={{ height: 40 }} />
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
+export default CarFormScreen;
+
+// ===================== STYLES =====================
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
+  safeArea: { flex: 1, backgroundColor: '#fff' },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    padding: 16,
   },
-  backBtn: {
-    padding: 8,
+  iconSmall: { width: 28, height: 28 },
+  saveButton: {
+    backgroundColor: '#7A3EFF',
+    width: 110,
+    height: 38,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  backIcon: {
+  saveText: { color: '#fff', fontWeight: '600', fontSize: 13 },
+
+  container: { paddingHorizontal: 20 },
+
+  // Step Progress
+  stepCard: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#EDECF3',
+    borderRadius: 20,
+    paddingVertical: 25,
+    paddingHorizontal: 10,
+    marginBottom: 25,
+  },
+  stepContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  stepItem: { alignItems: 'center', flex: 1 },
+  stepRow: { flexDirection: 'row', alignItems: 'center' },
+
+  stepIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+   
+  },
+
+  stepIcon: {
+    width: 22,
+    height: 22,
+    resizeMode: 'contain',
+  },
+  stepLine: {
+    height: 3,
+    flex: 1,
+    marginHorizontal: 6,
+    borderRadius: 2,
+  },
+  stepLabel: { fontSize: 12, color: '#777', marginBottom: 6 },
+  stepLabelActive: { color: '#000', fontWeight: '600' },
+
+  title: { fontSize: 22, fontWeight: '700', color: '#000', marginBottom: 11 },
+  sectionSubTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#666',
+    textTransform: 'uppercase',
+    marginBottom: 10,
+  },
+  label: { fontSize: 14, fontWeight: '600', color: '#111', marginBottom: 8 },
+  textBox: {
+    borderWidth: 1,
+    borderColor: '#E2E2E2',
+    borderRadius: 10,
+    padding: 11,
+    height: 130,
+    marginBottom: 5,
+  },
+  input: { fontSize: 13, color: '#000', textAlignVertical: 'top', flex: 1 },
+  counterText: { color: '#A0A0A0', fontSize: 12, textAlign: 'left' },
+
+  labelBelow: { fontSize: 13, fontWeight: '500', color: '#111', marginTop: 15 },
+  radioRow: { flexDirection: 'row', marginVertical: 8 },
+  radioOption: { flexDirection: 'row', alignItems: 'center', marginRight: 25 },
+  radioCircle: {
     width: 20,
     height: 20,
-    tintColor: '#000',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000',
-    flex: 1,
-    marginLeft: 12,
-  },
-  moreBtn: {
-    padding: 8,
-  },
-  moreIcon: {
-    width: 4,
-    height: 16,
-    tintColor: '#000',
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: 20,
-  },
-  carHeaderCard: {
-    flexDirection: 'row',
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
-  },
-  carHeaderImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    backgroundColor: '#E5E7EB',
-  },
-  carHeaderInfo: {
-    marginLeft: 12,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#8B5CF6',
+    alignItems: 'center',
     justifyContent: 'center',
   },
-  carHeaderName: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 4,
+  radioSelected: { borderColor: '#8B5CF6' },
+  radioDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#8B5CF6',
   },
-  carHeaderId: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  idIcon: {
-    width: 12,
-    height: 12,
-    tintColor: '#6B7280',
-    marginRight: 4,
-  },
-  carHeaderIdText: {
-    fontSize: 12,
-    color: '#6B7280',
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-  },
-  infoLabel: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  chevronIcon: {
-    width: 20,
-    height: 20,
-    tintColor: '#9CA3AF',
-  },
-  section: {
-    marginTop: 20,
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 12,
-  },
-  aboutText: {
-    fontSize: 14,
-    color: '#6B7280',
-    lineHeight: 20,
-  },
-  chargeRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-  },
-  chargeLabel: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#111827',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  zapIcon: {
-    width: 16,
-    height: 16,
-    tintColor: '#F59E0B',
-    marginLeft: 4,
-  },
-  chargeValue: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  chargePrice: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#111827',
-  },
-  chargeUnit: {
-    fontSize: 13,
-    color: '#6B7280',
-  },
-  rentBadge: {
-    marginLeft: 8,
-  },
-  rentText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#10B981',
-  },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-  },
-  detailLabel: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#6B7280',
-  },
-  detailValue: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  rcImage: {
-    width: 80,
-    height: 60,
-    borderRadius: 8,
-    backgroundColor: '#E5E7EB',
-  },
-  colorCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  imagesGrid: {
+  radioLabel: { marginLeft: 8, fontSize: 14, color: '#111' },
+
+  label1: { marginTop: 20, fontSize: 15, fontWeight: '600', color: '#111' },
+  label2: { color: 'grey', fontSize: 13 },
+
+  grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginHorizontal: -4,
+    gap: 10,
   },
-  gridImage: {
-    width: '31.33%',
+  card: {
+    width: '30%',
     aspectRatio: 1,
-    margin: 4,
-    borderRadius: 8,
-    backgroundColor: '#E5E7EB',
-  },
-  featuresRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginHorizontal: -4,
-  },
-  featureBox: {
-    width: '48%',
-    margin: 4,
-    padding: 16,
-    borderRadius: 12,
+    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: '#E2E2E2',
+    borderRadius: 10,
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  featureIcon: {
-    width: 32,
-    height: 32,
-    tintColor: '#7C3AED',
-    marginBottom: 8,
-  },
-  featureText: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#111827',
+  selectedCard: { borderColor: '#7A3EFF' },
+  icon: { width: 30, height: 30, marginBottom: 6 },
+  cardText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#000',
     textAlign: 'center',
+  },
+
+  continueButton: {
+    backgroundColor: '#7A3EFF',
+    width: '100%',
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 30,
+  },
+  continueText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 15,
+    letterSpacing: 1,
   },
 });

@@ -154,6 +154,8 @@ const HostRegistrationStack = () => (
     <HostStackNav.Screen name="PersonalLocation" component={PersonalLocation} />
     <HostStackNav.Screen name="UploadRegistration" component={UploadRegistrationScreen} />
     <HostStackNav.Screen name="SubmissionSuccess" component={SubmissionSuccessScreen} />
+    <HostStackNav.Screen name="CarDetailson" component={CarDetailsListScreen} />
+
   </HostStackNav.Navigator>
 );
 
