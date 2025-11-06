@@ -36,6 +36,7 @@ import NotificationScreen from './ProfileScreen/NotificationScreen';
 import BookingsScreen from './Booking screens/BookingsScreen';
 // Original RatingScreen (can be accessed from BookingsScreen)
 import RatingScreen from './Booking screens/RatingScreen';
+import EndTripScreen from './Booking screens/EndTripScreen';
 
 // --- Report Flow Screens ---
 // Import the new report screens for user reporting functionality
@@ -245,6 +246,16 @@ const App = () => {
               animation: 'slide_from_right',
             }}
           />
+
+          <RootStack.Screen 
+            name="EndTripScreen" 
+            component={EndTripScreen}
+            options={{
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+
            <RootStack.Screen 
             name="CarDetail" 
             component={CarDetailListingScreen} 

@@ -393,11 +393,12 @@ const CompletedBookingsScreen: React.FC<CompletedBookingsScreenProps> = ({ navig
       onPress={() => handleBookingPress(booking)}
       activeOpacity={0.7}
     >
-      {/* Car Model and Year */}
-      <View style={styles.bookingHeader}>
         <Text style={styles.carModel}>
           {booking.carModel} {booking.carYear}
         </Text>
+      {/* Car Model and Year */}
+      <View style={styles.bookingHeader}>
+       
         {booking.rating && (
           <View style={styles.ratingContainer}>
             <Text style={styles.ratingText}>★ {booking.rating}</Text>

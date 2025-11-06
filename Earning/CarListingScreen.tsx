@@ -74,7 +74,7 @@ const CarCard = ({ car, onToggleLock }: any) => {
       <View style={localStyles.cardHeader}>
         <View style={localStyles.lockBadge}>
           <Image
-            source={require('./assets/car.png')}
+            source={require('./assets/car1.png')}
             style={[
               localStyles.lockIcon,
               { tintColor: car.isLocked ? '#DC2626' : '#7C3AED' },

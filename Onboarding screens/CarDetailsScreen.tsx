@@ -45,7 +45,7 @@ const CarFormScreen = () => {
   const [fastag, setFastag] = useState('Yes');
   const [delivery, setDelivery] = useState('Yes');
   const [selected, setSelected] = useState<number[]>([]);
-  const currentStep = 3; // Car Image step
+  const currentStep = 4; // Car Image step
   const maxLength = 200;
 
     const navigation = useNavigation();
