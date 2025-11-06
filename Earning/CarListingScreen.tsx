@@ -189,12 +189,12 @@ export default function CarListingScreen() {
     <SafeAreaView style={localStyles.screen}>
       {/* header */}
       <View style={localStyles.header}>
-        <TouchableOpacity style={localStyles.filterBtn} onPress={() => navigation.navigate('FilterScreen' as any)}>
+        <TouchableOpacity style={localStyles.filterBtn} onPress={() => navigation.navigate('FilterScreen' as never)}>
           <Image source={require('./assets/filter.png')} style={localStyles.iconSm} />
           <Text style={localStyles.filterText}>Filter</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={localStyles.notificationWrapper} onPress={() => navigation.navigate('NotificationScreen' as any)}>
+        <TouchableOpacity style={localStyles.notificationWrapper} onPress={() => navigation.navigate('NotificationScreen' as never)}>
           <Image source={require('./assets/bell.png')} style={localStyles.iconMd} />
           <View style={localStyles.badge}><Text style={localStyles.badgeText}>3</Text></View>
         </TouchableOpacity>
@@ -202,7 +202,7 @@ export default function CarListingScreen() {
 
       <ScrollView contentContainerStyle={localStyles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Add Car */}
-        <TouchableOpacity style={localStyles.addCarBtn} onPress={() => navigation.navigate('CarListDetailsScreen' as any)}>
+        <TouchableOpacity style={localStyles.addCarBtn} onPress={() => navigation.navigate('CarListDetails' as never)}>
           <View style={localStyles.plusWrap}>
             <Image source={require('./assets/plus.png')} style={localStyles.plusIcon} />
           </View>

@@ -22,6 +22,8 @@ import PersonalDetailsScreen from './Onboarding screens/PersonalDetailsScreen';
 import PersonalLocation from './Onboarding screens/PersonalLocation';
 import SubmissionSuccessScreen from './Onboarding screens/SubmissionSuccessScreen';
 import UploadRegistrationScreen from './Onboarding screens/UploadRegistrationScreen';
+import CarAddDetails from './Earning/CarAddDetails';
+import GetBackSoon from './Earning/GetBackSoon';
 
 // --- Main App Screens ---
 import HomePage from './HomePage/Home';
@@ -55,7 +57,7 @@ import SupportChat from './ProfileScreen/SupportChat';
 import EditProfileScreen from './ProfileScreen/EditProfileScreen';
 import CarListingScreen from './Earning/CarListingScreen';
 import CarDetailsScreen from './Completed screens/CarDetailsScreen';
-// import CarDetailListingScreen from './Earning/CarDetailListingScreen';
+import CarDetailListingScreen from './Earning/CarDetailListingScreen';
 // --- Stack & Tab Navigators ---
 const RootStack = createNativeStackNavigator();
 const OnboardingStackNav = createNativeStackNavigator();
@@ -243,17 +245,25 @@ const App = () => {
               animation: 'slide_from_right',
             }}
           />
-           {/*<RootStack.Screen 
+           <RootStack.Screen 
             name="CarDetail" 
             component={CarDetailListingScreen} 
             options={{
               presentation: 'card',
               animation: 'slide_from_right',
             }}
-          />*/}
+          />
           <RootStack.Screen 
           name="CarCard" 
           component={CarListingScreen} 
+          options={{
+            presentation: 'card',
+            animation: 'slide_from_right',
+          }}
+        />
+         <RootStack.Screen 
+          name="EarningCarAddDetails" 
+          component={CarAddDetails} 
           options={{
             presentation: 'card',
             animation: 'slide_from_right',
@@ -268,6 +278,18 @@ const App = () => {
               animation: 'slide_from_right',
             }}
           />
+
+        <RootStack.Screen 
+            name="GetBackSoon" 
+            component={GetBackSoon} 
+            options={{
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+
+
+
           <RootStack.Screen 
             name="RatingScreen" 
             component={RatingScreen}

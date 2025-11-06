@@ -12,7 +12,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 
 // Step titles
-const steps = ['Personal', 'ID Proof', 'Car Image', 'Car Details'];
+const steps = [ 'ID Proof', 'Car Image', 'Car Details'];
 
 // Car features data
 const safetyFeatures = [
@@ -38,7 +38,7 @@ const entertainmentFeatures = [
   { id: 14, name: 'Wifi Connect', icon: require('./assets/wifi.png') },
 ];
 
-const CarFormScreen = () => {
+const CarAddDetails = () => {
   const [description, setDescription] = useState(
     'Hey there,\nThis car is my Swift and it’s absolutely the best. You won’t find comfort in any other car than my Swift.'
   );
@@ -194,7 +194,7 @@ const CarFormScreen = () => {
         {/* Continue Button */}
         <TouchableOpacity
           style={styles.continueButton}
-          onPress={() => navigation.navigate('SubmissionSuccess' as never)}>
+          onPress={() => navigation.navigate('GetBackSoon' as never)}>
           <Text style={styles.continueText}>CONTINUE</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -202,7 +202,7 @@ const CarFormScreen = () => {
   );
 };
 
-export default CarFormScreen;
+export default CarAddDetails;
 
 // ===================== STYLES =====================
 const styles = StyleSheet.create({
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   stepRow: { flexDirection: 'row', alignItems: 'center' },
 
   stepIconContainer: {
-    width: 40,
+    width: 90,
     height: 40,
     borderRadius: 20,
     alignItems: 'center',
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   stepLine: {
     height: 3,
     flex: 1,
-    marginHorizontal: 6,
+    marginHorizontal: -25,
     borderRadius: 2,
   },
   stepLabel: { fontSize: 12, color: '#777', marginBottom: 6 },

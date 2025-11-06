@@ -69,26 +69,18 @@ const CarDetailsScreen = ({ navigation }) => {
             To ensure trust and security on our platform we ask you to retake a few images of the vehicle before handover.
           </Text>
 
-          <View style={styles.imageGrid}>
-            <View style={styles.carImage}>
-              <View style={styles.imagePlaceholder} />
-            </View>
-            <View style={styles.carImage}>
-              <View style={styles.imagePlaceholder} />
-            </View>
-            <View style={styles.carImage}>
-              <View style={styles.imagePlaceholder} />
-            </View>
-            <View style={styles.carImage}>
-              <View style={styles.imagePlaceholder} />
-            </View>
-            <View style={styles.carImage}>
-              <View style={styles.imagePlaceholder} />
-            </View>
-            <View style={styles.carImage}>
-              <View style={styles.imagePlaceholder} />
-            </View>
-          </View>
+         <View style={styles.imageGrid}>
+  {[...Array(6)].map((_, index) => (
+    <View key={index} style={styles.carImage}>
+      <Image 
+        source={require('./assets/carre.png')} 
+        style={styles.imageFile}
+        resizeMode="cover"
+      />
+    </View>
+  ))}
+</View>
+
         </View>
 
         {/* Speedometer Section */}
@@ -165,6 +157,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F7FA',
   },
+  imageFile: {
+  width: '100%',
+  height: '100%',
+  borderRadius: 8,
+  borderWidth: 1,
+  borderColor: '#D1D5DB',
+},
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -211,8 +210,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   sectionTitleLarge: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '800',
     color: '#111827',
     marginBottom: 8,
   },

@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { useNavigation } from '@react-navigation/native';
 
-const FinalPage = () => {
+const GetBackSoon = () => {
   const navigation = useNavigation();
 
   // Navigation handlers
@@ -51,7 +51,7 @@ const FinalPage = () => {
   );
 };
 
-export default FinalPage;
+export default GetBackSoon;
 
 const styles = StyleSheet.create({
   container: {
