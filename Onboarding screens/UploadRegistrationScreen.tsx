@@ -652,7 +652,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#c7e3f7ff',
     flex: 1,
     borderRadius: 50,
-    marginHorizontal: -20,
+    marginHorizontal: -12,
     marginBottom: 8,
   },
   tabLineActive: {

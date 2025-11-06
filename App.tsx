@@ -22,6 +22,8 @@ import PersonalDetailsScreen from './Onboarding screens/PersonalDetailsScreen';
 import PersonalLocation from './Onboarding screens/PersonalLocation';
 import SubmissionSuccessScreen from './Onboarding screens/SubmissionSuccessScreen';
 import UploadRegistrationScreen from './Onboarding screens/UploadRegistrationScreen';
+import CarAddDetails from './Earning/CarAddDetails';
+import GetBackSoon from './Earning/GetBackSoon';
 
 // --- Main App Screens ---
 import HomePage from './HomePage/Home';
@@ -34,7 +36,12 @@ import NotificationScreen from './ProfileScreen/NotificationScreen';
 import BookingsScreen from './Booking screens/BookingsScreen';
 // Original RatingScreen (can be accessed from BookingsScreen)
 import RatingScreen from './Booking screens/RatingScreen';
+<<<<<<< HEAD
 import UpcomingSubmission from './Booking screens/UpcomingSubmission';
+=======
+import EndTripScreen from './Booking screens/EndTripScreen';
+
+>>>>>>> 7d3684e7f5d5b85290e005af1a368d798a3b1f45
 // --- Report Flow Screens ---
 // Import the new report screens for user reporting functionality
 import UserProfileScreen from './ProfileScreen/DriverScreen';
@@ -56,7 +63,7 @@ import SupportChat from './ProfileScreen/SupportChat';
 import EditProfileScreen from './ProfileScreen/EditProfileScreen';
 import CarListingScreen from './Earning/CarListingScreen';
 import CarDetailsScreen from './Completed screens/CarDetailsScreen';
-// import CarDetailListingScreen from './Earning/CarDetailListingScreen';
+import CarDetailListingScreen from './Earning/CarDetailListingScreen';
 // --- Stack & Tab Navigators ---
 const RootStack = createNativeStackNavigator();
 const OnboardingStackNav = createNativeStackNavigator();
@@ -156,6 +163,8 @@ const HostRegistrationStack = () => (
     <HostStackNav.Screen name="PersonalLocation" component={PersonalLocation} />
     <HostStackNav.Screen name="UploadRegistration" component={UploadRegistrationScreen} />
     <HostStackNav.Screen name="SubmissionSuccess" component={SubmissionSuccessScreen} />
+    <HostStackNav.Screen name="CarDetailson" component={CarDetailsListScreen} />
+
   </HostStackNav.Navigator>
 );
 
@@ -251,17 +260,35 @@ const App = () => {
               animation: 'slide_from_right',
             }}
           />
-           {/*<RootStack.Screen 
+
+          <RootStack.Screen 
+            name="EndTripScreen" 
+            component={EndTripScreen}
+            options={{
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+
+           <RootStack.Screen 
             name="CarDetail" 
             component={CarDetailListingScreen} 
             options={{
               presentation: 'card',
               animation: 'slide_from_right',
             }}
-          />*/}
+          />
           <RootStack.Screen 
           name="CarCard" 
           component={CarListingScreen} 
+          options={{
+            presentation: 'card',
+            animation: 'slide_from_right',
+          }}
+        />
+         <RootStack.Screen 
+          name="EarningCarAddDetails" 
+          component={CarAddDetails} 
           options={{
             presentation: 'card',
             animation: 'slide_from_right',
@@ -276,6 +303,18 @@ const App = () => {
               animation: 'slide_from_right',
             }}
           />
+
+        <RootStack.Screen 
+            name="GetBackSoon" 
+            component={GetBackSoon} 
+            options={{
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+
+
+
           <RootStack.Screen 
             name="RatingScreen" 
             component={RatingScreen}

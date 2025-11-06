@@ -22,7 +22,6 @@ import { responsive, sizes } from '../utils/responsive';
  * Booking data interface
  * Defines the structure of a completed booking
  */
-
 interface Booking {
   id: string;
   carModel: string;
@@ -109,8 +108,8 @@ const SAMPLE_BOOKINGS: Booking[] = [
     endTime: '10:00 PM',
     status: 'Ride Completed',
     completedDaysAgo: 2,
-    totalAmount: 2500,
-    rating: 4.8,
+    // totalAmount: 2500,
+    // rating: 4.8,
     notes: 'Excellent driver, very punctual',
   },
   {
@@ -126,7 +125,7 @@ const SAMPLE_BOOKINGS: Booking[] = [
     status: 'Ride Completed',
     completedDaysAgo: 4,
     totalAmount: 2200,
-    rating: 4.5,
+    // rating: 4.5,
     notes: 'Clean car, smooth ride',
   },
   {
@@ -142,7 +141,7 @@ const SAMPLE_BOOKINGS: Booking[] = [
     status: 'Ride Completed',
     completedDaysAgo: 6,
     totalAmount: 1800,
-    rating: 4.2,
+    // rating: 4.2,
     notes: 'Good service overall',
   },
 ];
@@ -169,18 +168,18 @@ const formatDaysAgo = (days: number): string => {
  * @param status - Booking status
  * @returns Color string
  */
-const getStatusColor = (status: Booking['status']): string => {
-  switch (status) {
-    case 'Ride Completed':
-      return '#10B981'; // Green
-    case 'Ride Cancelled':
-      return '#EF4444'; // Red
-    case 'Ride In Progress':
-      return '#F59E0B'; // Yellow
-    default:
-      return '#6B7280'; // Gray
-  }
-};
+// const getStatusColor = (status: Booking['status']): string => {
+//   switch (status) {
+//     case 'Ride Completed':
+//       return '#10B981'; // Green
+//     case 'Ride Cancelled':
+//       return '#EF4444'; // Red
+//     case 'Ride In Progress':
+//       return '#F59E0B'; // Yellow
+//     default:
+//       return '#6B7280'; // Gray
+//   }
+// };
 
 /**
  * ========================================
@@ -394,11 +393,12 @@ const CompletedBookingsScreen: React.FC<CompletedBookingsScreenProps> = ({ navig
       onPress={() => handleBookingPress(booking)}
       activeOpacity={0.7}
     >
-      {/* Car Model and Year */}
-      <View style={styles.bookingHeader}>
         <Text style={styles.carModel}>
           {booking.carModel} {booking.carYear}
         </Text>
+      {/* Car Model and Year */}
+      <View style={styles.bookingHeader}>
+       
         {booking.rating && (
           <View style={styles.ratingContainer}>
             <Text style={styles.ratingText}>★ {booking.rating}</Text>
@@ -419,7 +419,7 @@ const CompletedBookingsScreen: React.FC<CompletedBookingsScreenProps> = ({ navig
 
         <View style={styles.bookingIdBadge}>
           <Text style={styles.bookingIdText}>
-            ID: {booking.id}
+           Booking ID: {booking.id}
           </Text>
         </View>
       </View>
@@ -428,8 +428,8 @@ const CompletedBookingsScreen: React.FC<CompletedBookingsScreenProps> = ({ navig
       <View style={styles.timeline}>
         <View style={styles.timelineItem}>
           <Image
-            source={require('./assets/up-arrow.png')}
-            style={styles.timelineIcon}
+            source={require('./assets/up-arrow.png')} 
+            style={styles.left}
             resizeMode="contain"
           />
           <View style={styles.timelineTextContainer}>
@@ -443,7 +443,7 @@ const CompletedBookingsScreen: React.FC<CompletedBookingsScreenProps> = ({ navig
         <View style={styles.timelineItem}>
           <Image
             source={require('./assets/car.png')}
-            style={styles.timelineIcon}
+            style={styles.car}
             resizeMode="contain"
           />
         </View>
@@ -457,31 +457,35 @@ const CompletedBookingsScreen: React.FC<CompletedBookingsScreenProps> = ({ navig
           </View>
           <Image
             source={require('./assets/down-arrow.png')}
-            style={styles.timelineIcon}
+            style={styles.right}
             resizeMode="contain"
           />
         </View>
       </View>
 
       {/* Status and Amount */}
-      <View style={styles.bookingFooter}>
-        <View style={styles.statusContainer}>
-          <View 
-            style={[
-              styles.statusIndicator, 
-              { backgroundColor: getStatusColor(booking.status) }
-            ]} 
-          />
-          <Text style={styles.statusText}>{booking.status}</Text>
-        </View>
-        
-        <View style={styles.amountContainer}>
-          <Text style={styles.amountText}>₹{booking.totalAmount}</Text>
-          <Text style={styles.daysAgoText}>
-            {formatDaysAgo(booking.completedDaysAgo)}
-          </Text>
-        </View>
-      </View>
+      {/* Dashed Divider Line */}
+<View style={styles.dashedDivider} />
+
+{/* Status and Amount */}
+<View style={styles.bookingFooter}>
+  <View style={styles.statusContainer}>
+    {/* <View 
+      style={[
+        styles.statusIndicator, 
+        { backgroundColor: getStatusColor(booking.status) }
+      ]} 
+    /> */}
+    <Text style={styles.statusText}>{booking.status}</Text>
+  </View>
+  
+  <View style={styles.amountContainer}>
+    {/* <Text style={styles.amountText}>₹{booking.totalAmount}</Text> */}
+    <Text style={styles.daysAgoText}>
+      {formatDaysAgo(booking.completedDaysAgo)}
+    </Text>
+  </View>
+</View>
     </TouchableOpacity>
   );
 
@@ -565,6 +569,24 @@ const styles = StyleSheet.create({
     padding: responsive.spacing(8),
     position: 'relative',
   },
+  // Dashed divider
+dashedDivider: {
+  width: '100%',
+  height: 0,
+  borderWidth: 1,
+  borderColor: '#E5E7EB',
+  borderStyle: 'dashed',
+  marginTop: responsive.spacing(16),
+  marginBottom: responsive.spacing(12),
+},
+
+// Footer styles
+bookingFooter: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginTop: responsive.spacing(8),
+},
   headerIcon: {
     width: sizes.icon.lg,
     height: sizes.icon.lg,
@@ -572,7 +594,8 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: sizes.text.lg,
     fontWeight: '600',
-    color: '#111827',
+    color: '#080808ff',
+    marginLeft:-142,
   },
   notificationBadge: {
     position: 'absolute',
@@ -592,6 +615,7 @@ const styles = StyleSheet.create({
     paddingTop: responsive.spacing(8),
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
+    marginLeft:30,
   },
   tab: {
     paddingVertical: responsive.spacing(12),
@@ -756,19 +780,26 @@ const styles = StyleSheet.create({
     marginTop: responsive.spacing(2),
   },
   timelineConnector: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#D1D5DB',
-    marginHorizontal: responsive.spacing(4),
-  },
-
-  // Footer styles
-  bookingFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: responsive.spacing(8),
-  },
+  flex: 1,
+  height: 1,
+  borderWidth: 1,
+  borderColor: '#D1D5DB',
+  borderStyle: 'dashed',
+  backgroundColor: 'transparent',
+  marginHorizontal: responsive.spacing(4),
+},
+left:{
+height:30,
+width:30,
+},
+car:{
+  height:30,
+width:30,
+},
+right:{
+  height:30,
+width:30,
+},
   statusContainer: {
     flexDirection: 'row',
     alignItems: 'center',
