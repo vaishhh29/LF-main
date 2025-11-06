@@ -73,15 +73,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconContainer: {
-    marginBottom: 24,
+    marginBottom: 20,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
     textAlign: 'center',
     fontFamily: 'DM Sans',
     marginBottom: 70,
     color: '#111827',
+    lineHeight:34
   },
   subtitle: {
     fontSize: 14,
@@ -90,9 +91,9 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   image: {
-    width: '70%',
-    height: 70,
-    marginBottom: 80,
+    width: '80%',
+    height: 80,
+    marginBottom: 40,
   },
   carimage: {
     width: '250%',
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderWidth: 1,
     borderColor: '#d1d5db',
-    paddingVertical: 14,
+    paddingVertical: 16,
     borderRadius: 6,
     alignItems: 'center',
     marginBottom: 12,
@@ -116,10 +117,11 @@ const styles = StyleSheet.create({
   },
   filledButton: {
     width: '100%',
-    backgroundColor: '#7e22ce',
-    paddingVertical: 14,
+    backgroundColor: '#7149E1',
+    paddingVertical: 16,
     borderRadius: 6,
     alignItems: 'center',
+    marginTop:10
   },
   filledButtonText: {
     color: '#fff',

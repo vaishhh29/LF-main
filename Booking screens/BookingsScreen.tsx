@@ -1,425 +1,3 @@
-// import React, { useState } from 'react';
-// import {
-//   View,
-//   Text,
-//   StyleSheet,
-//   SafeAreaView,
-//   TouchableOpacity,
-//   StatusBar,
-//   ScrollView,
-//   Image,
-// } from 'react-native';
-
-// // =======================
-// // Bookings Screen
-// // =======================
-// // This screen displays ongoing, upcoming, and completed bookings
-// // with filters, detailed booking cards, and bottom navigation.
-// // All icons are loaded from local assets for offline reliability.
-// // =======================
-
-// const BookingsScreen = ({ navigation }) => {
-//   const [activeTab, setActiveTab] = useState('ongoing');
-//   const [activeFilter, setActiveFilter] = useState('all');
-
-//   // Sample Booking Data (can be replaced with API data later)
-//   const bookings = [
-//     {
-//       id: 1,
-//       carName: 'Toyota Corolla 2023',
-//       renterName: 'Raju',
-//       bookingId: 'LF123456789',
-//       pickupDate: 'Thu, 12 Feb',
-//       pickupTime: '10:00 AM',
-//       dropoffDate: 'Thu, 14 Feb',
-//       dropoffTime: '12:00 PM',
-//       status: 'Booking confirmed',
-//       timestamp: '20 min ago',
-//     },
-//     {
-//       id: 2,
-//       carName: 'Honda City 2024',
-//       renterName: 'Ravi',
-//       bookingId: 'LF123456780',
-//       pickupDate: 'Fri, 15 Feb',
-//       pickupTime: '9:00 AM',
-//       dropoffDate: 'Fri, 16 Feb',
-//       dropoffTime: '11:00 AM',
-//       status: 'Booking confirmed',
-//       timestamp: '10 min ago',
-//     },
-//   ];
-
-//   // -----------------------------
-//   // Render Each Booking Card
-//   // -----------------------------
-//   const renderBookingCard = (booking) => (
-//     <View key={booking.id} style={styles.bookingCard}>
-//       {/* Car Name */}
-//       <Text style={styles.carName}>{booking.carName}</Text>
-
-//       {/* Renter Info + Booking ID */}
-//       <View style={styles.renterRow}>
-//         <View style={styles.renterInfo}>
-//           <View style={styles.avatar}>
-//             <Text style={styles.avatarText}>{booking.renterName[0]}</Text>
-//           </View>
-//           <Text style={styles.renterName}>{booking.renterName}</Text>
-//         </View>
-//         <Text style={styles.bookingId}>Booking ID: {booking.bookingId}</Text>
-//       </View>
-
-//       {/* Pickup and Dropoff Timeline */}
-//       <View style={styles.timelineContainer}>
-//         {/* Pickup */}
-//         <View style={styles.timelineItem}>
-//           <View style={styles.iconContainer}>
-//             <Image
-//               source={require('./assets/map-pin.png')}
-//               style={styles.iconSmall}
-//               resizeMode="contain"
-//             />
-//           </View>
-//           <View style={styles.timelineContent}>
-//             <Text style={styles.timelineDate}>{booking.pickupDate}</Text>
-//             <Text style={styles.timelineTime}>{booking.pickupTime}</Text>
-//           </View>
-//         </View>
-
-//         {/* Car Icon Connector */}
-//         <View style={styles.carIconContainer}>
-//           <View style={styles.carIcon}>
-//             <View style={styles.carIconDot} />
-//           </View>
-//         </View>
-
-//         {/* Dropoff */}
-//         <View style={styles.timelineItem}>
-//           <View style={styles.iconContainer}>
-//             <Image
-//               source={require('./assets/map-pin.png')}
-//               style={styles.iconSmall}
-//               resizeMode="contain"
-//             />
-//           </View>
-//           <View style={styles.timelineContent}>
-//             <Text style={styles.timelineDate}>{booking.dropoffDate}</Text>
-//             <Text style={styles.timelineTime}>{booking.dropoffTime}</Text>
-//           </View>
-//         </View>
-//       </View>
-
-//       {/* Action Buttons */}
-//       <View style={styles.actionButtons}>
-//         <TouchableOpacity style={styles.contactButton}>
-//           <Image
-//             source={require('./assets/phone.png')}
-//             style={styles.iconSmall}
-//             resizeMode="contain"
-//           />
-//           <Text style={styles.contactButtonText}>Contact</Text>
-//         </TouchableOpacity>
-
-//         <TouchableOpacity style={styles.handoverButton}>
-//           <Text style={styles.handoverButtonText}>Vehicle Handover</Text>
-//         </TouchableOpacity>
-//       </View>
-
-//       {/* Status Footer */}
-//       <View style={styles.statusFooter}>
-//         <Text style={styles.statusText}>{booking.status}</Text>
-//         <Text style={styles.timestampText}>{booking.timestamp}</Text>
-//       </View>
-//     </View>
-//   );
-
-//   return (
-//     <SafeAreaView style={styles.container}>
-//       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-
-//       {/* =======================
-//           Custom Status Bar
-//       ======================= */}
-     
-
-//       {/* =======================
-//           Header with Back & Notification
-//       ======================= */}
-//       <View style={styles.header}>
-//         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-//           <Image
-//             source={require('./assets/chevron-left.png')}
-//             style={styles.iconMedium}
-//             resizeMode="contain"
-//           />
-//         </TouchableOpacity>
-//         <Text style={styles.headerTitle}>Bookings</Text>
-//         <TouchableOpacity style={styles.notificationButton}>
-//           <Image
-//             source={require('./assets/bell.png')}
-//             style={styles.iconMedium}
-//             resizeMode="contain"
-//           />
-//           <View style={styles.notificationBadge}>
-//             <Text style={styles.notificationBadgeText}>3</Text>
-//           </View>
-//         </TouchableOpacity>
-//       </View>
-
-//       {/* =======================
-//           Tabs (Upcoming, Ongoing, Completed)
-//       ======================= */}
-//      <View style={styles.tabsContainer}>
-//   {['upcoming', 'ongoing', 'completed'].map((tab) => (
-//     <TouchableOpacity
-//       key={tab}
-//       style={[styles.tab, activeTab === tab && styles.activeTab]}
-//       onPress={() => {
-//         if (tab === 'upcoming') {
-//           navigation.navigate('UpcomingBookingDetailScreen');
-//         } 
-//         else if (tab === 'completed') {
-//           navigation.navigate('CompletedBookingsScreen');
-//         } else {
-//           setActiveTab(tab);
-//         }
-//       }}
-//     >
-//       <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
-//         {tab.charAt(0).toUpperCase() + tab.slice(1)}
-//       </Text>
-//     </TouchableOpacity>
-//   ))}
-// </View>
-
-
-//       {/* =======================
-//           Filter Chips
-//       ======================= */}
-//       <View style={styles.filterContainer}>
-//         {['all', 'carNames', 'carNames2'].map((filter) => (
-//           <TouchableOpacity
-//             key={filter}
-//             style={[styles.filterChip, activeFilter === filter && styles.activeFilterChip]}
-//             onPress={() => setActiveFilter(filter)}
-//           >
-//             <Text
-//               style={[
-//                 styles.filterChipText,
-//                 activeFilter === filter && styles.activeFilterChipText,
-//               ]}
-//             >
-//               {filter === 'all' ? 'All' : 'Car names'}
-//             </Text>
-//           </TouchableOpacity>
-//         ))}
-//       </View>
-
-//       {/* =======================
-//           Bookings List
-//       ======================= */}
-//       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-//         {bookings.map((booking) => renderBookingCard(booking))}
-//         <View style={styles.bottomSpacing} />
-//       </ScrollView>
-
-    
-      
-//     </SafeAreaView>
-//   );
-// };
-
-// // =======================
-// // Styles
-// // =======================
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#F5F5F7',
-//   },
-//   statusBar: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     padding: 16,
-//     backgroundColor: '#FFFFFF',
-//   },
-//   time: {
-//     fontSize: 12,
-//     fontWeight: '600',
-//   },
-//   statusIcons: {
-//     flexDirection: 'row',
-//     gap: 4,
-//   },
-//   icon: { fontSize: 14 },
-//   header: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'space-between',
-//     padding: 16,
-//     backgroundColor: '#FFFFFF',
-//   },
-//   backButton: { padding: 4 },
-//   headerTitle: {
-//     fontSize: 18,
-//     fontWeight: '600',
-//     flex: 1,
-//     marginLeft: 12,
-//   },
-//   notificationButton: { position: 'relative' },
-//   notificationBadge: {
-//     position: 'absolute',
-//     top: -4,
-//     right: -4,
-//     backgroundColor: '#6D38E8',
-//     borderRadius: 10,
-//     width: 18,
-//     height: 18,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   notificationBadgeText: {
-//     color: '#FFF',
-//     fontSize: 10,
-//     fontWeight: '600',
-//   },
-//   tabsContainer: {
-//     flexDirection: 'row',
-//     backgroundColor: '#FFFFFF',
-//     paddingHorizontal: 25,
-//     paddingVertical: 12,
-//   },
-//   tab: { marginRight: 8 },
-//   activeTab: { borderBottomWidth: 2, borderBottomColor: '#6D38E8' },
-//   tabText: { fontSize: 14, color: '#9E9E9E' },
-//   activeTabText: { color: '#6D38E8', fontWeight: '600' },
-//   filterContainer: {
-//     flexDirection: 'row',
-//     paddingHorizontal: 16,
-//     paddingVertical: 12,
-//     backgroundColor: '#FFFFFF',
-//     gap: 8,
-//   },
-//   filterChip: {
-//     paddingVertical: 6,
-//     paddingHorizontal: 16,
-//     borderRadius: 20,
-//     borderWidth: 1,
-//     borderColor: '#E0E0E0',
-//   },
-//   activeFilterChip: {
-//     backgroundColor: '#6D38E8',
-//     borderColor: '#6D38E8',
-//   },
-//   filterChipText: { fontSize: 13, color: '#666' },
-//   activeFilterChipText: { color: '#FFF', fontWeight: '500' },
-//   content: { flex: 1, paddingHorizontal: 16, paddingTop: 16 },
-//   bookingCard: {
-//     backgroundColor: '#FFF',
-//     borderRadius: 16,
-//     padding: 16,
-//     marginBottom: 16,
-//     shadowColor: '#000',
-//     shadowOffset: { width: 0, height: 2 },
-//     shadowOpacity: 0.05,
-//     shadowRadius: 8,
-//     elevation: 2,
-//   },
-//   carName: { fontSize: 16, fontWeight: '600', marginBottom: 12 },
-//   renterRow: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     marginBottom: 16,
-//   },
-//   renterInfo: { flexDirection: 'row', alignItems: 'center' },
-//   avatar: {
-//     width: 32,
-//     height: 32,
-//     borderRadius: 16,
-//     backgroundColor: '#FEE2E2',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     marginRight: 8,
-//   },
-//   avatarText: { color: '#DC2626', fontWeight: '600' },
-//   bookingId: { fontSize: 11, color: '#666' },
-//   timelineContainer: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     marginBottom: 16,
-//     paddingHorizontal: 8,
-//   },
-//   timelineItem: { flexDirection: 'row', alignItems: 'center', flex: 1 },
-//   iconContainer: {
-//     width: 32,
-//     height: 32,
-//     borderRadius: 16,
-//     backgroundColor: '#F5F5F7',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     marginRight: 8,
-//   },
-//   timelineDate: { fontSize: 12, fontWeight: '500' },
-//   timelineTime: { fontSize: 11, color: '#666' },
-//   carIconContainer: { paddingHorizontal: 12 },
-//   carIcon: {
-//     width: 32,
-//     height: 32,
-//     borderRadius: 16,
-//     backgroundColor: '#F5F5F7',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   carIconDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: '#9E9E9E' },
-//   actionButtons: { flexDirection: 'row', gap: 8, marginBottom: 12 },
-//   contactButton: {
-//     flex: 1,
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     paddingVertical: 12,
-//     borderRadius: 8,
-//     borderWidth: 1,
-//     borderColor: '#6D38E8',
-//     gap: 6,
-//   },
-//   contactButtonText: { color: '#6D38E8', fontWeight: '600' },
-//   handoverButton: {
-//     flex: 1,
-//     paddingVertical: 12,
-//     borderRadius: 8,
-//     backgroundColor: '#6D38E8',
-//     alignItems: 'center',
-//   },
-//   handoverButtonText: { color: '#FFF', fontWeight: '600' },
-//   statusFooter: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     paddingTop: 12,
-//     borderTopWidth: 1,
-//     borderTopColor: '#F5F5F7',
-//   },
-//   statusText: { fontSize: 13, fontWeight: '500' },
-//   timestampText: { fontSize: 12, color: '#9E9E9E' },
-//   bottomSpacing: { height: 20 },
-//   bottomNav: {
-//     flexDirection: 'row',
-//     backgroundColor: '#FFF',
-//     borderTopWidth: 1,
-//     borderTopColor: '#E0E0E0',
-//     paddingVertical: 8,
-//   },
-//   navItem: { flex: 1, alignItems: 'center' },
-//   navText: { fontSize: 11, color: '#9E9E9E', marginTop: 4 },
-//   navTextActive: { color: '#6D38E8', fontWeight: '600' },
-//   iconSmall: { width: 16, height: 16 },
-//   iconMedium: { width: 24, height: 24 },
-// });
-
-// export default BookingsScreen;
-
-
-
 import React, { useState } from 'react';
 import {
   View,
@@ -432,75 +10,35 @@ import {
   Image,
 } from 'react-native';
 
-/**
- * ===========================
- * Bookings Screen
- * ===========================
- * Displays all bookings categorized as:
- *   - Upcoming
- *   - Ongoing
- *   - Completed
- *
- * Each booking card shows:
- *   - Car details
- *   - Renter info
- *   - Timeline (pickup/dropoff)
- *   - Contact + Handover actions
- *
- * When a user taps a booking card → navigates to BookingDetailScreen
- * ===========================
- */
-
 const BookingsScreen = ({ navigation }) => {
-  const [activeTab, setActiveTab] = useState('ongoing');
+  const [activeTab, setActiveTab] = useState('upcoming');
   const [activeFilter, setActiveFilter] = useState('all');
 
-  /**
-   * Mock Booking Data (replace later with API data)
-   */
   const bookings = [
     {
       id: 1,
-      carName: 'Toyota Corolla 2023',
       renterName: 'Raju',
       bookingId: 'LF123456789',
       pickupDate: 'Thu, 12 Feb',
       pickupTime: '10:00 AM',
       dropoffDate: 'Thu, 14 Feb',
       dropoffTime: '12:00 PM',
-      status: 'Booking confirmed',
-      timestamp: '20 min ago',
-    },
-    {
-      id: 2,
-      carName: 'Honda City 2024',
-      renterName: 'Ravi',
-      bookingId: 'LF123456780',
-      pickupDate: 'Fri, 15 Feb',
-      pickupTime: '9:00 AM',
-      dropoffDate: 'Fri, 16 Feb',
-      dropoffTime: '11:00 AM',
-      status: 'Booking confirmed',
-      timestamp: '10 min ago',
+      price: '₹ 2000',
     },
   ];
 
-  /**
-   * Renders a single booking card
-   */
   const renderBookingCard = (booking) => (
     <TouchableOpacity
       key={booking.id}
       style={styles.bookingCard}
       activeOpacity={0.8}
       onPress={() =>
-        navigation.navigate('UpcomingBookingDetailScreen', { bookingId: booking.id })
+        navigation.navigate('UpcomingDetailScreen', {
+          bookingId: booking.id,
+        })
       }
     >
-      {/* Car Name */}
-      <Text style={styles.carName}>{booking.carName}</Text>
-
-      {/* Renter Info + Booking ID */}
+      {/* Top Section */}
       <View style={styles.renterRow}>
         <View style={styles.renterInfo}>
           <View style={styles.avatar}>
@@ -511,66 +49,59 @@ const BookingsScreen = ({ navigation }) => {
         <Text style={styles.bookingId}>Booking ID: {booking.bookingId}</Text>
       </View>
 
-      {/* Pickup and Dropoff Timeline */}
+      {/* Timeline Section */}
       <View style={styles.timelineContainer}>
         {/* Pickup */}
         <View style={styles.timelineItem}>
-          <View style={styles.iconContainer}>
+          <View style={styles.iconCircle}>
             <Image
-              source={require('./assets/map-pin.png')}
+              source={require('./assets/up-arrow.png')}
               style={styles.iconSmall}
               resizeMode="contain"
             />
           </View>
-          <View style={styles.timelineContent}>
+          <View style={styles.timelineTextContainer}>
             <Text style={styles.timelineDate}>{booking.pickupDate}</Text>
             <Text style={styles.timelineTime}>{booking.pickupTime}</Text>
           </View>
         </View>
 
-        {/* Connector Icon */}
-        <View style={styles.carIconContainer}>
-          <View style={styles.carIcon}>
-            <View style={styles.carIconDot} />
-          </View>
+        {/* Center Dotted Line + Car */}
+        <View style={styles.centerConnector}>
+          <View style={styles.dottedLine} />
+          <Image
+            source={require('./assets/map-pin.png')}
+            style={styles.carIcon}
+            resizeMode="contain"
+          />
+          <View style={styles.dottedLine} />
         </View>
 
         {/* Dropoff */}
-        <View style={styles.timelineItem}>
-          <View style={styles.iconContainer}>
+        <View style={styles.timelineItemRight}>
+          <View style={styles.timelineTextContainerRight}>
+            <Text style={styles.timelineDate}>{booking.dropoffDate}</Text>
+            <Text style={styles.timelineTime}>{booking.dropoffTime}</Text>
+          </View>
+          <View style={styles.iconCircle}>
             <Image
-              source={require('./assets/map-pin.png')}
+              source={require('./assets/down-arrow.png')}
               style={styles.iconSmall}
               resizeMode="contain"
             />
           </View>
-          <View style={styles.timelineContent}>
-            <Text style={styles.timelineDate}>{booking.dropoffDate}</Text>
-            <Text style={styles.timelineTime}>{booking.dropoffTime}</Text>
-          </View>
         </View>
       </View>
 
-      {/* Action Buttons */}
-      <View style={styles.actionButtons}>
-        <TouchableOpacity style={styles.contactButton}>
-          <Image
-            source={require('./assets/phone.png')}
-            style={styles.iconSmall}
-            resizeMode="contain"
-          />
-          <Text style={styles.contactButtonText}>Contact</Text>
-        </TouchableOpacity>
+      {/* Dotted line separator */}
+      <View style={styles.dashLineSeparator} />
 
-        <TouchableOpacity style={styles.handoverButton}>
-          <Text style={styles.handoverButtonText}>Vehicle Handover</Text>
+      {/* Fare + Verify */}
+      <View style={styles.fareRow}>
+        <Text style={styles.fareText}>Ride fare: {booking.price}</Text>
+        <TouchableOpacity style={styles.verifyButton}>
+          <Text style={styles.verifyButtonText}>Verify</Text>
         </TouchableOpacity>
-      </View>
-
-      {/* Status Footer */}
-      <View style={styles.statusFooter}>
-        <Text style={styles.statusText}>{booking.status}</Text>
-        <Text style={styles.timestampText}>{booking.timestamp}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -579,14 +110,9 @@ const BookingsScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
-      {/* ---------------------------
-          Header (Back + Title + Bell)
-      ---------------------------- */}
+      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-        >
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Image
             source={require('./assets/chevron-left.png')}
             style={styles.iconMedium}
@@ -608,14 +134,12 @@ const BookingsScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* ---------------------------
-          Tabs (Upcoming / Ongoing / Completed)
-      ---------------------------- */}
+      {/* Tabs */}
       <View style={styles.tabsContainer}>
         {['upcoming', 'ongoing', 'completed'].map((tab) => (
           <TouchableOpacity
             key={tab}
-            style={[styles.tab, activeTab === tab && styles.activeTab]}
+            style={styles.tab}
             onPress={() => {
               if (tab === 'upcoming') {
                 navigation.navigate('UpcomingScreen');
@@ -627,17 +151,19 @@ const BookingsScreen = ({ navigation }) => {
             }}
           >
             <Text
-              style={[styles.tabText, activeTab === tab && styles.activeTabText]}
+              style={[
+                styles.tabText,
+                activeTab === tab && styles.activeTabText,
+              ]}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </Text>
+            {activeTab === tab && <View style={styles.activeLine} />}
           </TouchableOpacity>
         ))}
       </View>
 
-      {/* ---------------------------
-          Filter Chips
-      ---------------------------- */}
+      {/* Filter Chips */}
       <View style={styles.filterContainer}>
         {['all', 'carNames', 'carNames2'].map((filter) => (
           <TouchableOpacity
@@ -660,13 +186,8 @@ const BookingsScreen = ({ navigation }) => {
         ))}
       </View>
 
-      {/* ---------------------------
-          Booking List
-      ---------------------------- */}
-      <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
+      {/* Content */}
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {bookings.map((booking) => renderBookingCard(booking))}
         <View style={styles.bottomSpacing} />
       </ScrollView>
@@ -674,63 +195,70 @@ const BookingsScreen = ({ navigation }) => {
   );
 };
 
-/**
- * ===========================
- * Styles
- * ===========================
- */
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F7',
-  },
+  container: { flex: 1, backgroundColor: '#FFFFFF' },
+
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 16,
-    backgroundColor: '#FFFFFF',
+    marginTop: 30,
   },
   backButton: { padding: 4 },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    flex: 1,
-    marginLeft: 12,
-  },
+  headerTitle: { fontSize: 18, fontWeight: '600', flex: 1, marginLeft: 12 },
   notificationButton: { position: 'relative' },
   notificationBadge: {
     position: 'absolute',
     top: -4,
     right: -4,
-    backgroundColor: '#6D38E8',
+    backgroundColor: '#664896',
     borderRadius: 10,
     width: 18,
     height: 18,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  notificationBadgeText: {
-    color: '#FFF',
-    fontSize: 10,
+  notificationBadgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: '600' },
+
+  /* Tabs */
+   tabsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EAEAEA',
+    position: 'relative',
+  },
+  tab: {
+    alignItems: 'center',
+    paddingVertical: 10,
+    position: 'relative',
+  },
+  tabText: {
+    fontSize: 14,
+    color: '#9E9E9E',
+  },
+  activeTabText: {
+    color: '#6D38E8',
     fontWeight: '600',
   },
-  tabsContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 25,
-    paddingVertical: 12,
+  activeLine: {
+    position: 'absolute',
+    bottom: -1,   
+    height: 2,
+    width: 70,
+    backgroundColor: '#6D38E8',
+    borderRadius: 2,
   },
-  tab: { marginRight: 8 },
-  activeTab: { borderBottomWidth: 2, borderBottomColor: '#6D38E8' },
-  tabText: { fontSize: 14, color: '#9E9E9E' },
-  activeTabText: { color: '#6D38E8', fontWeight: '600' },
+
+  /* Filter Chips */
   filterContainer: {
     flexDirection: 'row',
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: '#FFFFFF',
-    gap: 8,
+    gap: 10,
+    marginTop:5
   },
   filterChip: {
     paddingVertical: 6,
@@ -739,12 +267,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E0E0E0',
   },
-  activeFilterChip: {
-    backgroundColor: '#6D38E8',
-    borderColor: '#6D38E8',
-  },
+  activeFilterChip: { backgroundColor: '#6D38E8', borderColor: '#6D38E8' },
   filterChipText: { fontSize: 13, color: '#666' },
   activeFilterChipText: { color: '#FFF', fontWeight: '500' },
+
+  /* Booking Card */
   content: { flex: 1, paddingHorizontal: 16, paddingTop: 16 },
   bookingCard: {
     backgroundColor: '#FFF',
@@ -757,11 +284,10 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-  carName: { fontSize: 16, fontWeight: '600', marginBottom: 12 },
   renterRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   renterInfo: { flexDirection: 'row', alignItems: 'center' },
   avatar: {
@@ -774,68 +300,95 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   avatarText: { color: '#DC2626', fontWeight: '600' },
-  bookingId: { fontSize: 11, color: '#666' },
+  renterName: { fontSize: 14, fontWeight: '500' },
+  bookingId: {
+    fontSize: 11,
+    color: '#000',
+    backgroundColor: '#F1EDFC',
+    textAlignVertical: 'center',
+    padding: 8,
+    borderRadius: 6,
+  },
+
+  /* Timeline */
   timelineContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
-    paddingHorizontal: 8,
+    marginVertical: 8,
+    marginBottom: 15,
   },
-  timelineItem: { flexDirection: 'row', alignItems: 'center', flex: 1 },
-  iconContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#F5F5F7',
+  timelineItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  timelineItemRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  iconCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 8,
   },
-  timelineDate: { fontSize: 12, fontWeight: '500' },
+  iconSmall: {
+    width: 25,
+    height: 25,
+
+  },
+  timelineTextContainer: { marginLeft: 8 },
+  timelineTextContainerRight: { marginRight: 8, alignItems: 'flex-end' },
+  timelineDate: { fontSize: 12, fontWeight: '600', color: '#000' },
   timelineTime: { fontSize: 11, color: '#666' },
-  carIconContainer: { paddingHorizontal: 12 },
-  carIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#F5F5F7',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  carIconDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: '#9E9E9E' },
-  actionButtons: { flexDirection: 'row', gap: 8, marginBottom: 12 },
-  contactButton: {
-    flex: 1,
+  centerConnector: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#6D38E8',
-    gap: 6,
-  },
-  contactButtonText: { color: '#6D38E8', fontWeight: '600' },
-  handoverButton: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: 8,
-    backgroundColor: '#6D38E8',
-    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 4,
   },
-  handoverButtonText: { color: '#FFF', fontWeight: '600' },
-  statusFooter: {
+  dottedLine: {
+    flex: 1,
+    height: 1,
+   borderBottomWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: '#666666',
+    marginLeft:4,
+    marginRight:4
+  },
+  carIcon: {
+    width: 20,
+    height: 20,
+    marginHorizontal: 6,
+    tintColor: '#000',
+  },
+  dashLineSeparator: {
+    borderBottomWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: '#D9D9D9',
+    marginTop: 6,
+  },
+
+  /* Fare */
+  fareRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#F5F5F7',
+    alignItems: 'center',
+    marginTop: 15,
   },
-  statusText: { fontSize: 13, fontWeight: '500' },
-  timestampText: { fontSize: 12, color: '#9E9E9E' },
+  fareText: { color: '#4D4D4D', fontWeight: '600', fontSize: 14 },
+  verifyButton: {
+    backgroundColor: '#6D38E8',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  verifyButtonText: { color: '#FFF', fontWeight: '600', fontSize: 13 },
   bottomSpacing: { height: 20 },
-  iconSmall: { width: 16, height: 16 },
-  iconMedium: { width: 24, height: 24 },
+  iconMedium: { width: 30, height: 30 },
 });
 
 export default BookingsScreen;
