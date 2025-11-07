@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   StatusBar,
   Image,
+  Alert,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
@@ -36,10 +37,40 @@ const CheckIcon = () => (
   </Svg>
 );
 
+const NextIcon = () => (
+  <Svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+    <Path 
+      d="M9 18l6-6-6-6" 
+      stroke="#FFFFFF" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
 const CarDetailsScreen = ({ navigation }) => {
   const [carReturned, setCarReturned] = useState(true);
   const [carInspected, setCarInspected] = useState(true);
   const [carCleaned, setCarCleaned] = useState(true);
+
+  // Navigate to CarAddDetails screen - THIS SHOULD WORK NOW
+  const handleAddCarDetails = () => {
+    console.log('Navigating to CarAddDetails...');
+    navigation.navigate('CarAddDetails');
+  };
+
+  const handleEditDetails = () => {
+    console.log('Navigating to CarAddDetails with edit mode...');
+    navigation.navigate('CarAddDetails', { 
+      isEditing: true,
+      carData: {
+        speedometerStart: 484,
+        speedometerEnd: 1122,
+        images: []
+      }
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -64,23 +95,31 @@ const CarDetailsScreen = ({ navigation }) => {
       >
         {/* Car Images Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitleLarge}>Car Images</Text>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitleLarge}>Car Images</Text>
+            <TouchableOpacity 
+              style={styles.editButton}
+              onPress={handleEditDetails}
+            >
+              <Text style={styles.editButtonText}>Edit</Text>
+            </TouchableOpacity>
+          </View>
+          
           <Text style={styles.imageSubtext}>
             To ensure trust and security on our platform we ask you to retake a few images of the vehicle before handover.
           </Text>
 
-         <View style={styles.imageGrid}>
-  {[...Array(6)].map((_, index) => (
-    <View key={index} style={styles.carImage}>
-      <Image 
-        source={require('./assets/carre.png')} 
-        style={styles.imageFile}
-        resizeMode="cover"
-      />
-    </View>
-  ))}
-</View>
-
+          <View style={styles.imageGrid}>
+            {[...Array(6)].map((_, index) => (
+              <View key={index} style={styles.carImage}>
+                <Image 
+                  source={require('./assets/carre.png')} 
+                  style={styles.imageFile}
+                  resizeMode="cover"
+                />
+              </View>
+            ))}
+          </View>
         </View>
 
         {/* Speedometer Section */}
@@ -145,6 +184,24 @@ const CarDetailsScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
+        {/* Action Buttons */}
+        <View style={styles.actionButtons}>
+          <TouchableOpacity 
+            style={styles.secondaryButton}
+            onPress={handleEditDetails}
+          >
+            <Text style={styles.secondaryButtonText}>Edit Details</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.primaryButton}
+            onPress={handleAddCarDetails}
+          >
+            <NextIcon />
+            <Text style={styles.primaryButtonText}>Add New Car</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* Bottom Spacing */}
         <View style={styles.bottomSpacer} />
       </ScrollView>
@@ -152,18 +209,19 @@ const CarDetailsScreen = ({ navigation }) => {
   );
 };
 
+// Your styles remain exactly the same...
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F7FA',
   },
   imageFile: {
-  width: '100%',
-  height: '100%',
-  borderRadius: 8,
-  borderWidth: 1,
-  borderColor: '#D1D5DB',
-},
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -209,11 +267,25 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
   sectionTitleLarge: {
     fontSize: 20,
     fontWeight: '800',
     color: '#111827',
-    marginBottom: 8,
+  },
+  editButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  editButtonText: {
+    fontSize: 14,
+    color: '#7C3AED',
+    fontWeight: '600',
   },
   imageSubtext: {
     fontSize: 13,
@@ -231,15 +303,6 @@ const styles = StyleSheet.create({
     width: '31%',
     aspectRatio: 1,
     marginBottom: 10,
-  },
-  imagePlaceholder: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#E5E7EB',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#D1D5DB',
-    borderStyle: 'dashed',
   },
   speedometerInputs: {
     flexDirection: 'row',
@@ -302,6 +365,41 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: '#F3F4F6',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    marginHorizontal: 16,
+    marginTop: 16,
+    gap: 12,
+  },
+  primaryButton: {
+    flex: 1,
+    backgroundColor: '#7C3AED',
+    padding: 16,
+    borderRadius: 10,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  primaryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  secondaryButton: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 10,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+  },
+  secondaryButtonText: {
+    color: '#7C3AED',
+    fontSize: 16,
+    fontWeight: '600',
   },
   bottomSpacer: {
     height: 24,

@@ -21,7 +21,7 @@ import PersonalDetailsScreen from './Onboarding screens/PersonalDetailsScreen';
 import PersonalLocation from './Onboarding screens/PersonalLocation';
 import SubmissionSuccessScreen from './Onboarding screens/SubmissionSuccessScreen';
 import UploadRegistrationScreen from './Onboarding screens/UploadRegistrationScreen';
-import CarAddDetails from './Earning/CarAddDetails';
+import EnterCarDetails from './Earning/EnterCarDetails'
 import GetBackSoon from './Earning/GetBackSoon';
 
 // --- Main App Screens ---
@@ -55,6 +55,7 @@ import EditProfileScreen from './ProfileScreen/EditProfileScreen';
 import CarListingScreen from './Earning/CarListingScreen';
 import CarDetailsScreen from './Completed screens/CarDetailsScreen';
 import CarDetailListingScreen from './Earning/CarDetailListingScreen';
+
 
 const RootStack = createNativeStackNavigator();
 const OnboardingStackNav = createNativeStackNavigator();
@@ -121,7 +122,7 @@ const CompletedBookingsScreenWithSafeArea = withSafeArea(CompletedBookingsScreen
 const BookingDetailsScreenWithSafeArea = withSafeArea(BookingDetailsScreen);
 const CarListingScreenWithSafeArea = withSafeArea(CarListingScreen);
 const CarDetailListingScreenWithSafeArea = withSafeArea(CarDetailListingScreen);
-const CarAddDetailsWithSafeArea = withSafeArea(CarAddDetails);
+const EnterCarDetailsWithSafeArea = withSafeArea(EnterCarDetails); // ✅ This is defined
 const GetBackSoonWithSafeArea = withSafeArea(GetBackSoon);
 const CarListDetailsScreenWithSafeArea = withSafeArea(CarListDetailsScreen);
 
@@ -202,6 +203,10 @@ const App = () => {
       'NotificationScreen',
       'EditProfileScreen',
       'CarDetailsScreen',
+      'CarImageUpload',
+      'EnterCarDetails',
+      'CarAddDetails',
+      'CarImageUploadScreen',
     ];
     setIsLightScreen(whiteScreens.includes(currentRoute));
   };
@@ -232,19 +237,168 @@ const App = () => {
           }}
         >
           {/* Onboarding Flow */}
-          <RootStack.Screen name="Onboarding" component={SplashScreenWithSafeArea} options={{ headerShown: false }} />
-          <RootStack.Screen name="SignIn" component={SignInScreenWithSafeArea} options={{ title: 'Sign In' }} />
-          <RootStack.Screen name="SignUp" component={SignUpScreenWithSafeArea} options={{ title: 'Sign Up' }} />
+          <RootStack.Screen
+            name="Onboarding"
+            component={SplashScreenWithSafeArea}
+            options={{ headerShown: false }}
+          />
+          <RootStack.Screen
+            name="SignIn"
+            component={SignInScreenWithSafeArea}
+            options={{ title: 'Sign In', headerShown: false }}
+          />
+          <RootStack.Screen
+            name="SignUp"
+            component={SignUpScreenWithSafeArea}
+            options={{ title: 'Sign Up', headerShown: false }}
+          />
 
-          {/* Main Flow */}
-          <RootStack.Screen name="MainTabs" component={BottomTabs} options={{ headerShown: false }} />
-          <RootStack.Screen name="HostRegistration" component={BecomeHostScreenWithSafeArea} options={{ title: 'Become a Host',headerShown:false }} />
-          <RootStack.Screen name="PersonalDetails" component={PersonalDetailsScreenWithSafeArea} options={{ title: 'Personal Details',headerShown: false }} />
-          <RootStack.Screen name="UploadRegistration" component={UploadRegistrationScreenWithSafeArea} options={{ title: 'Upload RC',headerShown: false }} />
-          <RootStack.Screen name="NotificationScreen" component={NotificationScreenWithSafeArea} options={{ title: 'Notifications' }} />
-          <RootStack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreenWithSafeArea} options={{ title: 'Privacy Policy' }} />
-          <RootStack.Screen name="EditProfileScreen" component={EditProfileScreenWithSafeArea} options={{ title: 'Edit Profile' }} />
-          <RootStack.Screen name="SupportChat" component={SupportChatWithSafeArea} options={{ title: 'Help & Support' }} />
+          {/* Host Registration Flow */}
+          <RootStack.Screen
+            name="HostRegistration"
+            component={BecomeHostScreenWithSafeArea}
+            options={{ title: 'Become a Host', headerShown: false }}
+          />
+          <RootStack.Screen
+            name="PersonalDetails"
+            component={PersonalDetailsScreenWithSafeArea}
+            options={{ title: 'Personal Details', headerShown: false }}
+          />
+          <RootStack.Screen
+            name="UploadRegistration"
+            component={UploadRegistrationScreenWithSafeArea}
+            options={{ title: 'Upload RC', headerShown: false }}
+          />
+          {/* CarImageUploadScreen comes FIRST */}
+          <RootStack.Screen
+            name="CarImageUpload"
+            component={CarImageUploadScreenWithSafeArea}
+            options={{ title: 'Upload Car Images', headerShown: false }}
+          />
+          {/* Then CarDetailsScreen */}
+          <RootStack.Screen
+            name="CarDetailsScreen"
+            component={CarDetailsScreenWithSafeArea}
+            options={{ title: 'Car Details', headerShown: false }}
+          />
+       
+          {/* FIXED: Use EnterCarDetailsWithSafeArea instead of EnterCarDetails */}
+          <RootStack.Screen
+            name="EnterCarDetails"
+            component={EnterCarDetailsWithSafeArea}
+            options={{ title: 'Add Car Details', headerShown: false }}
+          />
+
+          {/* Main App Flow */}
+          <RootStack.Screen
+            name="MainTabs"
+            component={BottomTabs}
+            options={{ headerShown: false }}
+          />
+
+          {/* Profile & Settings Screens */}
+          <RootStack.Screen
+            name="NotificationScreen"
+            component={NotificationScreenWithSafeArea}
+            options={{ title: 'Notifications' }}
+          />
+          <RootStack.Screen
+            name="PrivacyPolicy"
+            component={PrivacyPolicyScreenWithSafeArea}
+            options={{ title: 'Privacy Policy' }}
+          />
+          <RootStack.Screen
+            name="EditProfileScreen"
+            component={EditProfileScreenWithSafeArea}
+            options={{ title: 'Edit Profile' }}
+          />
+          <RootStack.Screen
+            name="SupportChat"
+            component={SupportChatWithSafeArea}
+            options={{ title: 'Help & Support' }}
+          />
+
+          {/* Additional Screens */}
+          <RootStack.Screen
+            name="OTP"
+            component={OTPScreenWithSafeArea}
+            options={{ title: 'Verify OTP' }}
+          />
+          <RootStack.Screen
+            name="PersonalLocation"
+            component={PersonalLocationWithSafeArea}
+            options={{ title: 'Location', headerShown: false }}
+          />
+          <RootStack.Screen
+            name="SubmissionSuccess"
+            component={SubmissionSuccessScreenWithSafeArea}
+            options={{ headerShown: false }}
+          />
+          <RootStack.Screen
+            name="CarDetailsList"
+            component={CarDetailsListScreenWithSafeArea}
+            options={{ title: 'Car Details' }}
+          />
+          <RootStack.Screen
+            name="CarListDetails"
+            component={CarListDetailsScreenWithSafeArea}
+            options={{ title: 'Car Details' }}
+          />
+          <RootStack.Screen
+            name="Rating"
+            component={RatingScreenWithSafeArea}
+            options={{ title: 'Rating' }}
+          />
+          <RootStack.Screen
+            name="UpcomingSubmission"
+            component={UpcomingSubmissionWithSafeArea}
+            options={{ title: 'Upcoming Trip' }}
+          />
+          <RootStack.Screen
+            name="EndTrip"
+            component={EndTripScreenWithSafeArea}
+            options={{ title: 'End Trip' }}
+          />
+          <RootStack.Screen
+            name="UpcomingBookingDetail"
+            component={UpcomingBookingDetailScreenWithSafeArea}
+            options={{ title: 'Booking Details' }}
+          />
+          <RootStack.Screen
+            name="UpcomingDetail"
+            component={UpcomingDetailScreenWithSafeArea}
+            options={{ title: 'Trip Details' }}
+          />
+          <RootStack.Screen
+            name="EnterCode"
+            component={EnterCodeScreenWithSafeArea}
+            options={{ title: 'Enter Code' }}
+          />
+          <RootStack.Screen
+            name="CompletedBookings"
+            component={CompletedBookingsScreenWithSafeArea}
+            options={{ title: 'Completed Bookings' }}
+          />
+          <RootStack.Screen
+            name="BookingDetails"
+            component={BookingDetailsScreenWithSafeArea}
+            options={{ title: 'Booking Details' }}
+          />
+          <RootStack.Screen
+            name="CarListing"
+            component={CarListingScreenWithSafeArea}
+            options={{ title: 'My Cars' }}
+          />
+          <RootStack.Screen
+            name="CarDetailListing"
+            component={CarDetailListingScreenWithSafeArea}
+            options={{ title: 'Car Details' }}
+          />
+          <RootStack.Screen
+            name="GetBackSoon"
+            component={GetBackSoonWithSafeArea}
+            options={{ headerShown: false }}
+          />
         </RootStack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

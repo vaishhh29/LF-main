@@ -17,7 +17,7 @@ import {
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import BottomErrorModal from '../components/BottomErrorModal';
-import Svg, { Path } from 'react-native-svg'; 
+import Svg, { Path } from 'react-native-svg';
 
 const { height } = Dimensions.get('window');
 
@@ -322,13 +322,14 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   footer: {
-    marginBottom: 100,
+    marginTop: 100
   },
   terms: {
     textAlign: 'center',
     color: '#909090',
     fontSize: 14,
     lineHeight: 25,
+    marginTop:19
   },
   link: {
     color: '#3B3B3B',

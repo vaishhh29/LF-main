@@ -1,0 +1,459 @@
+import React, { useState } from 'react';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  ScrollView,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+// Step titles
+const tabs = ['Personal', 'ID Proof', 'Car Images', 'Car details'];
+
+// Car features data - Fixed duplicate IDs and image paths
+const safetyFeatures = [
+  { id: 1, name: 'Front Airbags', icon: require('./assets/airbag.png') },
+  { id: 2, name: 'Side Airbags', icon: require('./assets/airbag.png') },
+  { id: 3, name: 'Back Airbags', icon: require('./assets/airbag.png') },
+  { id: 4, name: 'Ventilated Seats', icon: require('./assets/venti.png') },
+  { id: 5, name: '360 View Camera', icon: require('./assets/camera.png') },
+];
+
+const drivingFeatures = [
+  { id: 6, name: 'Keyless Entry', icon: require('./assets/airbag.png') },
+  { id: 7, name: 'Spacious Interiors', icon: require('./assets/venti.png') },
+  { id: 8, name: 'Parking Assist', icon: require('./assets/parking.png') },
+  { id: 9, name: 'Voice Control', icon: require('./assets/voice.png') },
+  { id: 10, name: 'Repair', icon: require('./assets/repair.png') },
+  { id: 11, name: 'Power Steering', icon: require('./assets/powerString.png') },
+];
+
+const entertainmentFeatures = [
+  { id: 12, name: 'Music System', icon: require('./assets/music.png') },
+  { id: 13, name: 'Wifi Connect', icon: require('./assets/wifi.png') },
+];
+
+const EnterCarDetails = () => {
+  const navigation = useNavigation();
+  const [description, setDescription] = useState(
+    'Hey there,\nThis car is my Swift and it\'s absolutely the best. You won\'t find comfort in any other car than my Swift.'
+  );
+  const [fastag, setFastag] = useState('Yes');
+  const [delivery, setDelivery] = useState('Yes');
+  const [selected, setSelected] = useState<number[]>([]);
+  const activeTab = 3; // Car details step
+  const maxLength = 200;
+
+  const toggleSelect = (id: number) => {
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const renderFeatureGrid = (title: string, features: any[]) => (
+    <View style={{ marginTop: 25 }}>
+      <Text style={styles.sectionSubTitle}>{title}</Text>
+      <View style={styles.grid}>
+        {features.map((feature) => (
+          <TouchableOpacity
+            key={feature.id}
+            style={[styles.card, selected.includes(feature.id) && styles.selectedCard]}
+            onPress={() => toggleSelect(feature.id)}>
+            <Image source={feature.icon} style={styles.icon} />
+            <Text style={styles.cardText}>{feature.name}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
+
+  const handleContinue = () => {
+    navigation.navigate('GetBackSoon' as never);
+  };
+
+  const handleSaveExit = () => {
+    navigation.goBack();
+  };
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={styles.backButton}>←</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSaveExit}>
+          <Text style={styles.saveButtonText}>SAVE & EXIT</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+        {/* Tab Navigation */}
+        <View style={styles.tabContainer}>
+          {tabs.map((tab, index) => (
+            <React.Fragment key={index}>
+              <View style={styles.tabItem}>
+                <Text style={[
+                  styles.tabText,
+                  activeTab === index && styles.tabTextActive
+                ]} numberOfLines={1}>
+                  {tab}
+                </Text>
+                <View style={styles.circleContainer}>
+                  <View style={[
+                    styles.tabCircle,
+                    activeTab === index && styles.tabCircleActive,
+                    activeTab > index && styles.tabCircleCompleted
+                  ]}>
+                    {activeTab > index ? (
+                      <Text style={styles.checkmark}>✓</Text>
+                    ) : activeTab === index ? (
+                      <View style={styles.tabDot} />
+                    ) : (
+                      <View style={styles.tabEmptyInner} />
+                    )}
+                  </View>
+                </View>
+              </View>
+              {index < tabs.length - 1 && (
+                <View style={[
+                  styles.tabLine,
+                  activeTab > index && styles.tabLineActive
+                ]} />
+              )}
+            </React.Fragment>
+          ))}
+        </View>
+
+        {/* Content Container */}
+        <View style={styles.content}>
+          {/* Description */}
+          <Text style={styles.title}>Add car description & features</Text>
+          <Text style={styles.label}>Tell us about your car</Text>
+          <View style={styles.textBox}>
+            <TextInput
+              style={styles.input}
+              multiline
+              maxLength={maxLength}
+              value={description}
+              onChangeText={setDescription}
+              placeholder="Describe your car..."
+            />
+          </View>
+          <Text style={styles.counterText}>
+            {description.length}/{maxLength}
+          </Text>
+
+          {/* FASTag */}
+          <Text style={styles.labelBelow}>FASTag Enabled</Text>
+          <View style={styles.radioRow}>
+            {['Yes', 'No'].map((option) => (
+              <TouchableOpacity
+                key={option}
+                style={styles.radioOption}
+                onPress={() => setFastag(option)}>
+                <View style={[styles.radioCircle, fastag === option && styles.radioSelected]}>
+                  {fastag === option && <View style={styles.radioDot} />}
+                </View>
+                <Text style={styles.radioLabel}>{option}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Delivery */}
+          <Text style={styles.labelBelow}>Do you offer home delivery services?</Text>
+          <View style={styles.radioRow}>
+            {['Yes', 'No'].map((option) => (
+              <TouchableOpacity
+                key={option}
+                style={styles.radioOption}
+                onPress={() => setDelivery(option)}>
+                <View
+                  style={[styles.radioCircle, delivery === option && styles.radioSelected]}>
+                  {delivery === option && <View style={styles.radioDot} />}
+                </View>
+                <Text style={styles.radioLabel}>{option}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Features */}
+          <Text style={styles.label1}>Select Car Features</Text>
+          <Text style={styles.label2}>Choose maximum 10 car features</Text>
+
+          {renderFeatureGrid('SAFETY', safetyFeatures)}
+          {renderFeatureGrid('DRIVING', drivingFeatures)}
+          {renderFeatureGrid('ENTERTAINMENT', entertainmentFeatures)}
+
+          {/* Continue Button */}
+          <TouchableOpacity
+            style={styles.continueButton}
+            onPress={handleContinue}>
+            <Text style={styles.continueText}>CONTINUE</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+export default EnterCarDetails;
+
+// ===================== STYLES =====================
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  container: {
+    flex: 1,
+  },
+  content: {
+    paddingHorizontal: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  backButton: {
+    fontSize: 24,
+    color: '#000',
+    fontWeight: 'bold',
+  },
+  saveButton: {
+    backgroundColor: '#7C3AED',
+    paddingHorizontal: 22,
+    paddingVertical: 8,
+    borderRadius: 6,
+  },
+  saveButtonText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 8,
+    paddingVertical: 24,
+    backgroundColor: '#FAFAFA',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  tabItem: {
+    alignItems: 'center',
+    flex: 1,
+    minWidth: 70,
+  },
+  circleContainer: {
+    height: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
+  tabText: {
+    fontSize: 10,
+    color: '#9CA3AF',
+    textAlign: 'center',
+    fontWeight: '500',
+    marginBottom: 8,
+    paddingHorizontal: 4,
+  },
+  tabTextActive: {
+    color: '#000',
+    fontWeight: '600',
+  },
+  tabCircle: {
+    width: 25,
+    height: 25,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  tabCircleActive: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#EDE9FE',
+    borderWidth: 0,
+  },
+  tabCircleCompleted: {
+    backgroundColor: '#7C3AED',
+    borderColor: '#7C3AED',
+    borderWidth: 0,
+  },
+  tabDot: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: '#7C3AED',
+  },
+  tabEmptyInner: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#E5E7EB',
+  },
+  checkmark: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  tabLine: {
+    height: 1,
+    backgroundColor: '#E5E7EB',
+    flex: 1,
+    marginHorizontal: -16,
+    marginTop: 20,
+  },
+  tabLineActive: {
+    backgroundColor: '#7C3AED',
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#000',
+    marginBottom: 11,
+    marginTop: 20,
+  },
+  sectionSubTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#666',
+    textTransform: 'uppercase',
+    marginBottom: 10,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111',
+    marginBottom: 8,
+  },
+  textBox: {
+    borderWidth: 1,
+    borderColor: '#E2E2E2',
+    borderRadius: 10,
+    padding: 11,
+    height: 130,
+    marginBottom: 5,
+  },
+  input: {
+    fontSize: 13,
+    color: '#000',
+    textAlignVertical: 'top',
+    flex: 1,
+  },
+  counterText: {
+    color: '#A0A0A0',
+    fontSize: 12,
+    textAlign: 'left',
+    marginBottom: 15,
+  },
+  labelBelow: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#111',
+    marginTop: 15,
+  },
+  radioRow: {
+    flexDirection: 'row',
+    marginVertical: 8,
+  },
+  radioOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 25,
+  },
+  radioCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#8B5CF6',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioSelected: {
+    borderColor: '#8B5CF6',
+  },
+  radioDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#8B5CF6',
+  },
+  radioLabel: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: '#111',
+  },
+  label1: {
+    marginTop: 20,
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#111',
+  },
+  label2: {
+    color: 'grey',
+    fontSize: 13,
+    marginBottom: 10,
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  card: {
+    width: '30%',
+    aspectRatio: 1,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#E2E2E2',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selectedCard: {
+    borderColor: '#7A3EFF',
+  },
+  icon: {
+    width: 30,
+    height: 30,
+    marginBottom: 6,
+  },
+  cardText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#000',
+    textAlign: 'center',
+  },
+  continueButton: {
+    backgroundColor: '#7A3EFF',
+    width: '100%',
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 30,
+  },
+  continueText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 15,
+    letterSpacing: 1,
+  },
+});

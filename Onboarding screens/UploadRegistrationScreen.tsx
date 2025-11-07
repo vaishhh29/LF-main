@@ -19,7 +19,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Slider from '@react-native-community/slider';
 import LinearGradient from 'react-native-linear-gradient';
 
-
 // Constants
 const TABS = ['Personal', 'ID Proof', 'Car image', 'Car details'];
 const CAR_MODELS = [
@@ -196,7 +195,7 @@ const UploadRegistrationScreen: React.FC = () => {
         carColor,
         kilometers,
       });
-      navigation.navigate('CarImageUpload' as never);
+      navigation.navigate('CarImageUpload'); // FIXED: Removed 'as never'
     }
   };
 
@@ -461,7 +460,7 @@ const UploadRegistrationScreen: React.FC = () => {
           <View style={styles.gradientSliderContainer}>
             {/* Gradient Background */}
             <LinearGradient
-              colors={['#7C3AED', '#B794F4', '#E9D5FF']}
+              colors={['#7C3AED', '#a070f4ff', '#d4b3f8ff']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.gradientTrack}
@@ -484,10 +483,10 @@ const UploadRegistrationScreen: React.FC = () => {
               onValueChange={setKilometers}
               minimumTrackTintColor="transparent"
               maximumTrackTintColor="transparent"
-              thumbTintColor="#1335cdff"
+              thumbTintColor="#5900f4ff"
               renderThumbComponent={() => (
                 <LinearGradient
-                  colors={['#7C3AED', '#B794F4']}
+                  colors={['#9a6aedc2', '#ad82f7ff']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={styles.thumbOuter}
@@ -573,8 +572,8 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: '#7C3AED',
-    paddingHorizontal: 24,
-    paddingVertical: 10,
+    paddingHorizontal: 22,
+    paddingVertical: 8,
     borderRadius: 6,
   },
   saveButtonText: {
@@ -585,75 +584,79 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     paddingVertical: 24,
     backgroundColor: '#FAFAFA',
-    alignItems: 'flex-end',
+    alignItems: 'center', // Change to center
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0',
   },
   tabItem: {
     alignItems: 'center',
     flex: 1,
+    minWidth: 70,
+  },
+  circleContainer: {
+    height: 32, // Consistent height for all
+    width: 32,  // Consistent width for all
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   tabText: {
-    fontSize: 12,
+    fontSize: 10,
     color: '#9CA3AF',
     textAlign: 'center',
     fontWeight: '500',
     marginBottom: 8,
+    paddingHorizontal: 2,
   },
   tabTextActive: {
     color: '#000',
     fontWeight: '600',
   },
+  // Use consistent 24px circles for all states
   tabCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 0,
+    borderWidth: 1,
     borderColor: '#E5E7EB',
   },
   tabCircleActive: {
-    width: 25,
-    height: 25,
-    borderRadius: 20,
-    backgroundColor: '#c7e3f7ff',
+    backgroundColor: '#EDE9FE',
     borderWidth: 0,
   },
   tabCircleCompleted: {
-    backgroundColor: '#c7e3f7ff',
-    borderColor: '#c7e3f7ff',
-    height: 30,
-    width: 30,
-    borderRadius: 14,
+    backgroundColor: '#7C3AED',
+    borderColor: '#7C3AED',
+    borderWidth: 0,
   },
   tabDot: {
-    width: 11,
-    height: 11,
-    borderRadius: 7,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
     backgroundColor: '#7C3AED',
   },
   tabEmptyInner: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#c7e3f7ff',
+    backgroundColor: '#E5E7EB',
   },
   checkmark: {
-    color: '#7C3AED',
-    fontSize: 14,
+    color: '#FFFFFF',
+    fontSize: 12,
     fontWeight: 'bold',
   },
   tabLine: {
-    height: 5,
-    backgroundColor: '#c7e3f7ff',
+    height: 1,
+    backgroundColor: '#E5E7EB',
     flex: 1,
-    borderRadius: 50,
-    marginHorizontal: -12,
-    marginBottom: 8,
+    marginHorizontal: -16,
+    marginTop: 20,
   },
   tabLineActive: {
     backgroundColor: '#7C3AED',
@@ -811,8 +814,8 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   sliderContainer: {
-    marginBottom: 24,
-    marginTop: 8,
+    marginBottom: 5,
+    marginTop: 20,
   },
   kmLabels: {
     flexDirection: 'row',
@@ -827,15 +830,12 @@ const styles = StyleSheet.create({
     minWidth: 30,
     textAlign: 'center',
   },
-  sliderWrapper: {
-    paddingHorizontal: 0,
-  },
   slider: {
     width: '100%',
     height: 40,
   },
   bottomSpacing: {
-    height: 20,
+    height: 25,
   },
   footer: {
     backgroundColor: '#FFFFFF',
@@ -901,13 +901,13 @@ const styles = StyleSheet.create({
   },
   gradientSliderContainer: {
     position: 'relative',
-    height: 25,
+    height: 50,
     justifyContent: 'center',
     marginTop: 15,
   },
   gradientTrack: {
     position: 'absolute',
-    height: 15,
+    height: 5,
     width: '100%',
     borderRadius: 50,
     backgroundColor: '#E5E7EB',
@@ -927,33 +927,25 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   thumbOuter: {
-    width: 60,          // makes it bigger
-    height: 60,         // makes it bigger
-    borderRadius: 30,   // perfect round shape
+    width: 100, // Slightly larger outer circle
+    height: 100,
+    borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: '#fff', // white border like the design
-    shadowColor: '#5910d9ff',
+    borderColor: '#fff',
+    backgroundColor: '#7C3AED',
+    shadowColor: '#5910d9',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 6,
-    elevation: 8,       // Android shadow
+    elevation: 8,
   },
-
   thumbInner: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#180303ff',
-  },
-  thumbTintColor: {
-    backgroundColor: '#3aeda5ff',
-    width: 50,
-    height: 50,
-    borderRadius: 10,
-
-
+    width: 30, // Increased from 16 to 24 (50% larger)
+    height: 30, // Increased from 16 to 24 (50% larger)
+    borderRadius: 12, // Increased from 8 to 12
+    backgroundColor: '#FFFFFF',
   },
 });
 

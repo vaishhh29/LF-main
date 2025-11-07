@@ -338,5 +338,6 @@ const styles = StyleSheet.create({
     color: '#909090',
     fontSize: 14,
     lineHeight: 22,
+    marginTop:150
   },
 });

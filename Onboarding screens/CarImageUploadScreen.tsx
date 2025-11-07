@@ -29,14 +29,14 @@ const ImageOptionsModal = ({ visible, onClose, onDelete, onReplace }) => (
     animationType="slide"
     onRequestClose={onClose}
   >
-    <TouchableOpacity 
-      style={styles.modalOverlay} 
-      activeOpacity={1} 
+    <TouchableOpacity
+      style={styles.modalOverlay}
+      activeOpacity={1}
       onPress={onClose}
     >
       <View style={styles.modalContent}>
         <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-        <Image source={require('./assets/close.png')} style={styles.close}/>
+          <Image source={require('./assets/close.png')} style={styles.close} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.modalOption} onPress={onDelete}>
@@ -47,8 +47,7 @@ const ImageOptionsModal = ({ visible, onClose, onDelete, onReplace }) => (
         <View style={styles.modalDivider} />
 
         <TouchableOpacity style={styles.modalOption} onPress={onReplace}>
-          {/* <Feather name="camera" size={22} color="#000" /> */}
-          <Image source={require('./assets/camera.png')}/>
+          <Image source={require('./assets/camera.png')} />
           <Text style={styles.modalOptionText}>Replace Photo</Text>
         </TouchableOpacity>
       </View>
@@ -63,9 +62,9 @@ const CarImageUploadScreen = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  
-  const steps = ['Personal', 'ID Proof', 'Car image', 'Car details'];
-  const currentStep = 2;
+
+  const TABS = ['Personal', 'ID Proof', 'Car image', 'Car details'];
+  const activeTab = 2;
 
   // Image Picker Options
   const imagePickerOptions = {
@@ -78,7 +77,7 @@ const CarImageUploadScreen = () => {
   // Function to pick image from gallery or camera
   const pickImage = (index, useCamera = false) => {
     const picker = useCamera ? launchCamera : launchImageLibrary;
-    
+
     picker(imagePickerOptions, (response) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
@@ -89,7 +88,7 @@ const CarImageUploadScreen = () => {
         const updatedImages = [...images];
         updatedImages[index] = imageUri;
         setImages(updatedImages);
-        
+
         // Check if all images are uploaded
         if (updatedImages.every((img) => img !== null)) {
           setShowSuccessMessage(true);
@@ -157,72 +156,76 @@ const CarImageUploadScreen = () => {
   const isValid = images.some((img) => img !== null);
   const allImagesUploaded = images.every((img) => img !== null);
 
+  // FIXED: Navigate to EnterCarDetails instead of CarDetails
   const handleContinue = () => {
     if (!isValid) return;
-    navigation.navigate('CarDetailson' as never);
+    navigation.navigate('EnterCarDetails' as never);
   };
+
+  // Render Tab Item
+  const renderTabItem = (tab: string, index: number) => (
+    <React.Fragment key={index}>
+      <View style={styles.tabItem}>
+        <Text
+          style={[
+            styles.tabText,
+            activeTab === index && styles.tabTextActive
+          ]}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {tab}
+        </Text>
+        <View style={styles.circleContainer}>
+          <View style={[
+            styles.tabCircle,
+            activeTab === index && styles.tabCircleActive,
+            activeTab > index && styles.tabCircleCompleted
+          ]}>
+            {activeTab > index ? (
+              <Text style={styles.checkmark}>✓</Text>
+            ) : activeTab === index ? (
+              <View style={styles.tabDot} />
+            ) : (
+              <View style={styles.tabEmptyInner} />
+            )}
+          </View>
+        </View>
+      </View>
+      {index < TABS.length - 1 && (
+        <View style={[
+          styles.tabLine,
+          activeTab > index && styles.tabLineActive
+        ]} />
+      )}
+    </React.Fragment>
+  );
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Image source={require('./assets/back.png')} style={styles.backIcon} />
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <View style={styles.backIconContainer}>
+              <Text style={styles.backIconText}>←</Text>
+            </View>
           </TouchableOpacity>
           <TouchableOpacity style={styles.saveExitButton}>
             <Text style={styles.saveExitText}>SAVE & EXIT</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Stepper */}
+        {/* Tab Navigation Stepper */}
         <View style={styles.tabContainer}>
-          {steps.map((label, index) => (
-            <React.Fragment key={index}>
-              <View style={styles.tabItem}>
-                <Text
-                  style={[
-                    styles.tabText,
-                    currentStep === index && styles.tabTextActive,
-                  ]}
-                >
-                  {label}
-                </Text>
-
-                <View
-                  style={[
-                    styles.tabCircle,
-                    currentStep === index && styles.tabCircleActive,
-                    currentStep > index && styles.tabCircleCompleted,
-                  ]}
-                >
-                  {currentStep > index ? (
-                    <Image source={require('./assets/tick1.png')} style={styles.tickIcon} />
-                  ) : currentStep === index ? (
-                    <View style={styles.tabDot} />
-                  ) : (
-                    <View style={styles.tabEmptyInner} />
-                  )}
-                </View>
-              </View>
-
-              {index < steps.length - 1 && (
-                <View
-                  style={[
-                    styles.tabLine,
-                    currentStep > index && styles.tabLineActive,
-                  ]}
-                />
-              )}
-            </React.Fragment>
-          ))}
+          {TABS.map(renderTabItem)}
         </View>
 
         {/* Content Header */}
         <View style={styles.contentHeader}>
           <Text style={styles.title}>Upload Car Images</Text>
           <Text style={styles.subtitle}>
-            {allImagesUploaded 
+            {allImagesUploaded
               ? 'To ensure trust and security on our platform, we require a valid ID proof.'
               : 'Click to upload car images of your vehicle'}
           </Text>
@@ -254,7 +257,7 @@ const CarImageUploadScreen = () => {
           {allImagesUploaded && showSuccessMessage ? (
             <>
               <View style={styles.successIconContainer}>
-                <Image source={require('./assets/tick1.png')}/>
+                <Image source={require('./assets/tick1.png')} />
               </View>
               <Text style={styles.successTitle}>You Are good To go.</Text>
               <Text style={styles.successSubtitle}>
@@ -311,39 +314,55 @@ const CarImageUploadScreen = () => {
 
 // ---------------- STYLES ----------------
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#FFF' },
-  container: { paddingBottom: 120 },
+  safeArea: { 
+    flex: 1, 
+    backgroundColor: '#FFF' 
+  },
+  container: { 
+    paddingBottom: 120 
+  },
 
   // Header
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: PADDING_HORIZONTAL,
+    paddingHorizontal: 16,
     paddingVertical: 10,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
   },
-  backButton: { padding: 5 },
-  backIcon: {
+  backIconContainer: {
     width: 24,
     height: 24,
-    tintColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backIconText: {
+    fontSize: 24,
+    color: '#000',
   },
   saveExitButton: {
-    backgroundColor: PRIMARY_COLOR,
-    paddingHorizontal: 15,
+    backgroundColor: '#7C3AED',
+    paddingHorizontal: 22,
     paddingVertical: 8,
-    borderRadius: BORDER_RADIUS,
+    borderRadius: 6,
   },
-  close:{
-height:20,
-width:20,
+  close: {
+    height: 20,
+    width: 20,
   },
-  saveExitText: { color: '#FFF', fontWeight: '600', fontSize: 14 },
+  saveExitText: { 
+    color: '#FFF', 
+    fontWeight: '600', 
+    fontSize: 14 
+  },
 
   // Tab Stepper
   tabContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     paddingVertical: 24,
     backgroundColor: '#FAFAFA',
     alignItems: 'flex-end',
@@ -353,13 +372,21 @@ width:20,
   tabItem: {
     alignItems: 'center',
     flex: 1,
+    minWidth: 70,
+  },
+  circleContainer: {
+    height: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
   },
   tabText: {
-    fontSize: 12,
-    color: '#050505ff',
+    fontSize: 10,
+    color: '#9CA3AF',
     textAlign: 'center',
     fontWeight: '500',
     marginBottom: 8,
+    paddingHorizontal: 2,
   },
   tabTextActive: {
     color: '#000',
@@ -383,15 +410,18 @@ width:20,
     borderWidth: 0,
   },
   tabCircleCompleted: {
-    backgroundColor: '#896af2ff',
-    borderColor: '#aea0deff',
+    backgroundColor: '#7C3AED',
+    borderColor: '#7C3AED',
     borderWidth: 0,
+    width: 25,
+    height: 25,
+    borderRadius: 14,
   },
   tabDot: {
     width: 14,
     height: 14,
     borderRadius: 7,
-    backgroundColor: '#6C40FF',
+    backgroundColor: '#7C3AED',
   },
   tabEmptyInner: {
     width: 8,
@@ -399,27 +429,38 @@ width:20,
     borderRadius: 4,
     backgroundColor: '#E5E7EB',
   },
-  tickIcon: {
-    width: 30,
-    height: 30,
-    // tintColor: '#d4c8c8ff',
-    // resizeMode: 'contain'
+  checkmark: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   tabLine: {
     height: 1,
     backgroundColor: '#E5E7EB',
     flex: 1,
-    marginHorizontal: -8,
-    marginBottom: 8,
+    marginHorizontal: -12,
+    marginBottom: 14,
   },
   tabLineActive: {
-    backgroundColor: '#6C40FF',
+    backgroundColor: '#7C3AED',
   },
 
   // Content Header
-  contentHeader: { paddingHorizontal: PADDING_HORIZONTAL, marginTop: 20 },
-  title: { fontSize: 22, fontWeight: '700', color: '#000', marginBottom: 8 },
-  subtitle: { fontSize: 14, color: '#888', lineHeight: 20 },
+  contentHeader: { 
+    paddingHorizontal: PADDING_HORIZONTAL, 
+    marginTop: 20 
+  },
+  title: { 
+    fontSize: 22, 
+    fontWeight: '700', 
+    color: '#000', 
+    marginBottom: 8 
+  },
+  subtitle: { 
+    fontSize: 14, 
+    color: '#888', 
+    lineHeight: 20 
+  },
 
   // Image Grid
   imageGrid: {
@@ -467,14 +508,13 @@ width:20,
     width: 60,
     height: 60,
     marginBottom: 20,
-    borderRadius: 30, 
+    borderRadius: 30,
   },
   uploadInstructionBold: {
     fontSize: 16,
     fontWeight: '600',
     color: '#000',
     marginBottom: 5,
-    
   },
   uploadInstructionSmall: {
     fontSize: 13,
@@ -522,7 +562,11 @@ width:20,
     borderRadius: 10,
     alignItems: 'center',
   },
-  continueButtonText: { color: '#FFF', fontSize: 16, fontWeight: '700' },
+  continueButtonText: { 
+    color: '#FFF', 
+    fontSize: 16, 
+    fontWeight: '700' 
+  },
 
   // Modal Styles
   modalOverlay: {
