@@ -6,6 +6,9 @@ import {
   TextInput,
   TouchableOpacity,
   Dimensions,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
@@ -112,92 +115,101 @@ const SignUpScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>
-          Welcome To <Text style={styles.highlight}>Lea-Flexi</Text>
-        </Text>
-        <Text style={styles.subtitle}>List your car.Earn with ease.</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: '#fff' }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.container}>
+          <View style={styles.content}>
+            <Text style={styles.title}>
+              Welcome To <Text style={styles.highlight}>Lea-Flexi</Text>
+            </Text>
+            <Text style={styles.subtitle}>List your car. Earn with ease.</Text>
 
-        <View style={[styles.phoneContainer, { gap: 20 }]}>
-          <TouchableOpacity style={styles.countryBox}>
-            <Text style={styles.countryText}>{countryCode}</Text>
-            <Svg width={18} height={18} viewBox="0 0 24 24">
-            <Path
-              d="M5 9l7 7 7-7"
-              stroke="#666"
-              strokeWidth={1.8}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-            />
-          </Svg>
-          </TouchableOpacity>
-          <TextInput
-            style={styles.phoneInput}
-            placeholder="Enter Phone Number"
-            placeholderTextColor="#999"
-            keyboardType="phone-pad"
-            value={phone}
-            onChangeText={setPhone}
+            <View style={[styles.phoneContainer, { gap: 20 }]}>
+              <TouchableOpacity style={styles.countryBox}>
+                <Text style={styles.countryText}>{countryCode}</Text>
+                <Svg width={18} height={18} viewBox="0 0 24 24">
+                  <Path
+                    d="M5 9l7 7 7-7"
+                    stroke="#666"
+                    strokeWidth={1.8}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    fill="none"
+                  />
+                </Svg>
+              </TouchableOpacity>
+              <TextInput
+                style={styles.phoneInput}
+                placeholder="Enter Phone Number"
+                placeholderTextColor="#999"
+                keyboardType="phone-pad"
+                value={phone}
+                onChangeText={setPhone}
+              />
+            </View>
+
+            <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+              <Text style={styles.buttonText}>Continue</Text>
+            </TouchableOpacity>
+
+            <View style={styles.dividerContainer}>
+              <View style={styles.line} />
+              <Text style={styles.orText}>Or continue with</Text>
+              <View style={styles.line} />
+            </View>
+
+            <TouchableOpacity style={styles.googleButton} onPress={handleGoogleSignIn}>
+              <Svg width={24} height={24} viewBox="0 0 48 48">
+                <Path
+                  fill="#EA4335"
+                  d="M24 9.5c3.54 0 6.33 1.46 8.27 2.69l6.15-6.15C34.65 2.41 29.69 0 24 0 14.64 0 6.48 5.68 2.69 13.87l7.5 5.84C12.2 13.17 17.55 9.5 24 9.5z"
+                />
+                <Path
+                  fill="#34A853"
+                  d="M46.13 24.54c0-1.58-.13-3.09-.37-4.54H24v8.59h12.5c-.54 2.89-2.16 5.34-4.59 6.98l7.02 5.46c4.1-3.78 6.47-9.36 6.47-16.49z"
+                />
+                <Path
+                  fill="#FBBC05"
+                  d="M10.19 28.29a14.41 14.41 0 0 1 0-8.58l-7.5-5.84A24.01 24.01 0 0 0 0 24c0 3.91.94 7.61 2.69 10.87l7.5-5.84z"
+                />
+                <Path
+                  fill="#4285F4"
+                  d="M24 48c6.48 0 11.91-2.15 15.88-5.87l-7.02-5.46c-2.02 1.36-4.6 2.16-7.76 2.16-6.45 0-11.8-3.67-14.81-9.21l-7.5 5.84C6.48 42.32 14.64 48 24 48z"
+                />
+              </Svg>
+              <Text style={styles.googleText}>Continue with Google</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+              <Text style={styles.bottomText}>
+                Already a member? <Text style={styles.links}>Sign In</Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Footer stays below keyboard */}
+          <View style={styles.footer}>
+            <Text style={styles.terms}>
+              By Continuing you agree to the carbon's{' '}
+              <Text style={styles.link}>Terms & Conditions</Text>
+            </Text>
+          </View>
+
+          <BottomErrorModal
+            visible={errorVisible}
+            message={errorMessage}
+            onClose={() => setErrorVisible(false)}
           />
         </View>
-
-        <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-          <Text style={styles.buttonText}>Continue</Text>
-        </TouchableOpacity>
-
-        {/* Divider with text */}
-        <View style={styles.dividerContainer}>
-          <View style={styles.line} />
-          <Text style={styles.orText}>Or continue with</Text>
-          <View style={styles.line} />
-        </View>
-
-        <TouchableOpacity style={styles.googleButton} onPress={handleGoogleSignIn}>
-          {/* ✅ SVG Google Icon */}
-          <Svg width={24} height={24} viewBox="0 0 48 48">
-            <Path
-              fill="#EA4335"
-              d="M24 9.5c3.54 0 6.33 1.46 8.27 2.69l6.15-6.15C34.65 2.41 29.69 0 24 0 14.64 0 6.48 5.68 2.69 13.87l7.5 5.84C12.2 13.17 17.55 9.5 24 9.5z"
-            />
-            <Path
-              fill="#34A853"
-              d="M46.13 24.54c0-1.58-.13-3.09-.37-4.54H24v8.59h12.5c-.54 2.89-2.16 5.34-4.59 6.98l7.02 5.46c4.1-3.78 6.47-9.36 6.47-16.49z"
-            />
-            <Path
-              fill="#FBBC05"
-              d="M10.19 28.29a14.41 14.41 0 0 1 0-8.58l-7.5-5.84A24.01 24.01 0 0 0 0 24c0 3.91.94 7.61 2.69 10.87l7.5-5.84z"
-            />
-            <Path
-              fill="#4285F4"
-              d="M24 48c6.48 0 11.91-2.15 15.88-5.87l-7.02-5.46c-2.02 1.36-4.6 2.16-7.76 2.16-6.45 0-11.8-3.67-14.81-9.21l-7.5 5.84C6.48 42.32 14.64 48 24 48z"
-            />
-          </Svg>
-          <Text style={styles.googleText}>Continue with Google</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
-          <Text style={styles.bottomText}>
-            Already a member? <Text style={styles.links}>Sign In</Text>
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Footer stays unchanged */}
-      <View style={styles.footer}>
-        <Text style={styles.terms}>
-          By Continuing you agree to the carbon's{' '}
-          <Text style={styles.link}>Terms & Conditions</Text>
-        </Text>
-      </View>
-
-      <BottomErrorModal
-        visible={errorVisible}
-        message={errorMessage}
-        onClose={() => setErrorVisible(false)}
-      />
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -210,6 +222,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: height / 8, 
+    paddingBottom: 40, // ✅ Added padding for footer spacing
   },
   content: {
     flexShrink: 1,
@@ -231,51 +244,40 @@ const styles = StyleSheet.create({
     marginBottom: 80,
   },
   phoneContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  marginBottom: 25,
-},
-
-countryBox: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderWidth: 1.5,
-  borderColor: '#E5E5E5',
-  borderRadius: 12,
-  backgroundColor: '#fff',
-  paddingHorizontal: 14,
-  height: 56,
-  width: 80,
-  gap: 3, 
-},
-
-dropdown: {
-  fontSize: 26,
-  color: '#666',
-  transform: [{ translateY: 3 }], 
-},
-
-countryText: {
-  fontSize: 16,
-  fontWeight: '500',
-  color: '#000',
-  marginRight: 5,
-},
-
-
-phoneInput: {
-  flex: 1,
-  borderWidth: 1.5,
-  borderColor: '#E5E5E5',
-  borderRadius: 12,
-  backgroundColor: '#fff',
-  height: 56, 
-  paddingHorizontal: 14,
-  fontSize: 16,
-  color: '#000',
-},
-
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 25,
+  },
+  countryBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#E5E5E5',
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    paddingHorizontal: 14,
+    height: 56,
+    width: 80,
+    gap: 3, 
+  },
+  countryText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#000',
+    marginRight: 5,
+  },
+  phoneInput: {
+    flex: 1,
+    borderWidth: 1.5,
+    borderColor: '#E5E5E5',
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    height: 56, 
+    paddingHorizontal: 14,
+    fontSize: 16,
+    color: '#000',
+  },
   button: {
     backgroundColor: '#7149E1',
     borderRadius: 12,
@@ -288,20 +290,18 @@ phoneInput: {
     fontWeight: '600',
     fontSize: 16,
   },
-dividerContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginVertical: 30,
-},
-
-line: {
-  height: 1,
-  backgroundColor: '#E5E5E5',
-  width: 70, 
-  marginHorizontal: 10,
-},
-
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 30,
+  },
+  line: {
+    height: 1,
+    backgroundColor: '#E5E5E5',
+    width: 70, 
+    marginHorizontal: 10,
+  },
   orText: {
     color: '#999',
     fontSize: 16,
@@ -333,7 +333,7 @@ line: {
     color: '#3B3B3B',
     fontWeight: '600',
     textDecorationLine: 'underline',
-    fontSize:16
+    fontSize: 16,
   },
   links: {
     color: '#7149E1',
@@ -341,7 +341,7 @@ line: {
     textDecorationLine: 'underline',
   },
   footer: {
-    marginBottom: 100,
+    marginBottom: 30, // ✅ footer spacing improved
   },
   terms: {
     textAlign: 'center',

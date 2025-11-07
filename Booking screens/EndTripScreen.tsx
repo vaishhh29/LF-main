@@ -22,7 +22,7 @@ export default function EndTripScreen() {
   // Handle trip completion
   const handleTripComplete = () => {
     console.log('Trip Completed');
-    navigation.navigate('HandOverScreen'); // Navigate to Handover screen
+    navigation.navigate('HandOver' as never); // Navigate to Handover screen
   };
 
   return (

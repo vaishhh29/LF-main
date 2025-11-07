@@ -36,12 +36,10 @@ import NotificationScreen from './ProfileScreen/NotificationScreen';
 import BookingsScreen from './Booking screens/BookingsScreen';
 // Original RatingScreen (can be accessed from BookingsScreen)
 import RatingScreen from './Booking screens/RatingScreen';
-<<<<<<< HEAD
-import UpcomingSubmission from './Booking screens/UpcomingSubmission';
-=======
 import EndTripScreen from './Booking screens/EndTripScreen';
+import Handover from './Booking screens/HandOverScreen';
+import RideSummary from './Booking screens/RideSummary';
 
->>>>>>> 7d3684e7f5d5b85290e005af1a368d798a3b1f45
 // --- Report Flow Screens ---
 // Import the new report screens for user reporting functionality
 import UserProfileScreen from './ProfileScreen/DriverScreen';
@@ -54,7 +52,6 @@ import AppPermissionScreen from './ProfileScreen/AppPermissionScreen';
 import PrivacyPolicyScreen from './ProfileScreen/PrivacyPolicyScreen';
 import { Image } from 'react-native';
 import UpcomingBookingDetailScreen from './Booking screens/UpcomingBookingDetailScreen';
-import UpcomingDetailScreen from './Booking screens/UpcomingDetailScreen';
 import EnterCodeScreen from './Booking screens/EnterCodeScreen';
 import CompletedBookingsScreen from './Completed screens/CompletedBookingsScreen';
 import BookingDetailsScreen from './Booking screens/BookingDetailsScreen';
@@ -120,7 +117,6 @@ const BottomTabs = () => (
     {/* Updated Bookings tab to use new BookingsScreen with tabs */}
     <Tab.Screen name="Bookings" component={BookingsScreen} />
     <Tab.Screen name="Profile" component={ProfileScreen} />
-    
   </Tab.Navigator>
 );
 
@@ -217,7 +213,6 @@ const App = () => {
           {/* Main App with Bottom Tabs - Primary app navigation */}
           <RootStack.Screen name="MainTabs" component={BottomTabs} />
 
-
           {/* Booking Related Screens */}
           {/* RatingScreen: Rate and review a completed booking */}
            <RootStack.Screen 
@@ -228,14 +223,7 @@ const App = () => {
               animation: 'slide_from_right',
             }}
           />
- <RootStack.Screen 
-            name="UpcomingDetailScreen" 
-            component={UpcomingDetailScreen} 
-            options={{
-              presentation: 'card',
-              animation: 'slide_from_right',
-            }}
-          />
+
           <RootStack.Screen 
             name="CompletedBookingsScreen" 
             component={CompletedBookingsScreen} 
@@ -264,6 +252,23 @@ const App = () => {
           <RootStack.Screen 
             name="EndTripScreen" 
             component={EndTripScreen}
+            options={{
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          <RootStack.Screen 
+            name="HandOver" 
+            component={Handover}
+            options={{
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+
+          <RootStack.Screen 
+            name="RideSummary" 
+            component={RideSummary}
             options={{
               presentation: 'card',
               animation: 'slide_from_right',
@@ -318,14 +323,6 @@ const App = () => {
           <RootStack.Screen 
             name="RatingScreen" 
             component={RatingScreen}
-            options={{
-              presentation: 'card',
-              animation: 'slide_from_right',
-            }}
-          />
-           <RootStack.Screen 
-            name="UpcomingSubmission" 
-            component={UpcomingSubmission}
             options={{
               presentation: 'card',
               animation: 'slide_from_right',

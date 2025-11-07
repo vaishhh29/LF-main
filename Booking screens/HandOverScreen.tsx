@@ -8,8 +8,10 @@ import {
   StyleSheet,
   SafeAreaView,
   StatusBar,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 // Import your icons from your assets folder or use react-native-vector-icons
 // For example: import Icon from 'react-native-vector-icons/Feather';
 
@@ -19,14 +21,34 @@ export default function HandoverHelpScreen() {
   // Handle trip completion
   const handleRideComplete = () => {
     console.log('Trip Completed');
-    navigation.navigate('RideSummary'); // Navigate to Handover screen
+    navigation.navigate('RideSummary' as never); // Navigate to Handover screen
   };
+  
   const [speedometer, setSpeedometer] = useState({
     fuel: false,
     carReturned: false,
     carInspected: false,
     carCleaned: false,
   });
+
+  // Initialize with null images for upload
+  const [carImages, setCarImages] = useState([
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+  ]);
+
+  const imageLabels = [
+    'Front View',
+    'Back View',
+    'Left Side',
+    'Right Side',
+    'Dashboard',
+    'Interior',
+  ];
 
   const trackingSteps = [
     {
@@ -56,15 +78,69 @@ export default function HandoverHelpScreen() {
     },
   ];
 
-  // Replace with your actual car images from assets
-  const carImages = [
-    require('./assets/car.png'),
-    require('./assets/car.png'),
-    require('./assets/car.png'),
-    require('./assets/car.png'),
-    require('./assets/car.png'),
-    require('./assets/car.png'),
-  ];
+  // Handle image upload
+  const handleImageUpload = (index) => {
+    Alert.alert(
+      'Select Image',
+      'Choose an option',
+      [
+        {
+          text: 'Take Photo',
+          onPress: () => openCamera(index),
+        },
+        {
+          text: 'Choose from Gallery',
+          onPress: () => openGallery(index),
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const openCamera = (index) => {
+    const options = {
+      mediaType: 'photo',
+      quality: 0.8,
+      saveToPhotos: true,
+    };
+
+    launchCamera(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled camera');
+      } else if (response.errorCode) {
+        console.log('Camera Error: ', response.errorMessage);
+        Alert.alert('Error', 'Failed to open camera');
+      } else if (response.assets && response.assets.length > 0) {
+        const newImages = [...carImages];
+        newImages[index] = response.assets[0].uri;
+        setCarImages(newImages);
+      }
+    });
+  };
+
+  const openGallery = (index) => {
+    const options = {
+      mediaType: 'photo',
+      quality: 0.8,
+    };
+
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.log('ImagePicker Error: ', response.errorMessage);
+        Alert.alert('Error', 'Failed to open gallery');
+      } else if (response.assets && response.assets.length > 0) {
+        const newImages = [...carImages];
+        newImages[index] = response.assets[0].uri;
+        setCarImages(newImages);
+      }
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -155,12 +231,23 @@ export default function HandoverHelpScreen() {
           </Text>
           <View style={styles.imageGrid}>
             {carImages.map((img, index) => (
-              <TouchableOpacity key={index} style={styles.imageContainer}>
-                <Image
-                  source={img}
-                  style={styles.carImage}
-                  resizeMode="cover"
-                />
+              <TouchableOpacity
+                key={index}
+                style={styles.imageContainer}
+                onPress={() => handleImageUpload(index)}
+              >
+                {img ? (
+                  <Image
+                    source={{ uri: img }}
+                    style={styles.carImage}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <View style={styles.placeholderContainer}>
+                    <Text style={styles.plusIcon}>+</Text>
+                    <Text style={styles.imageLabel}>{imageLabels[index]}</Text>
+                  </View>
+                )}
               </TouchableOpacity>
             ))}
           </View>
@@ -425,6 +512,28 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 8,
     backgroundColor: '#E5E7EB',
+  },
+  placeholderContainer: {
+    width: '100%',
+    height: 80,
+    borderRadius: 8,
+    backgroundColor: '#F3F4F6',
+    borderWidth: 2,
+    borderColor: '#D1D5DB',
+    borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  plusIcon: {
+    fontSize: 24,
+    color: '#7C3AED',
+    fontWeight: '300',
+  },
+  imageLabel: {
+    fontSize: 10,
+    color: '#666',
+    marginTop: 4,
+    textAlign: 'center',
   },
   speedometerItem: {
     flexDirection: 'row',
