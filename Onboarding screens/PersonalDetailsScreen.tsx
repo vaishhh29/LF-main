@@ -11,10 +11,13 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
+  Alert,
+  PermissionsAndroid,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
+import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 
 const PersonalDetailsScreen = () => {
   const navigation = useNavigation();
@@ -26,7 +29,10 @@ const PersonalDetailsScreen = () => {
   const [contact, setContact] = useState('');
   const [email, setEmail] = useState('');
   const [aadharNumber, setAadharNumber] = useState('');
-  
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [frontSideImage, setFrontSideImage] = useState(null);
+  const [backSideImage, setBackSideImage] = useState(null);
+
   // Location Modal States
   const [locationModalVisible, setLocationModalVisible] = useState(false);
   const [showLocationForm, setShowLocationForm] = useState(false);
@@ -40,7 +46,7 @@ const PersonalDetailsScreen = () => {
     latitude: 12.9716,
     longitude: 77.5946,
   });
-  const mapRef = useRef<MapView>(null);
+  const mapRef = useRef(null);
 
   const tabs = ['Personal', 'ID Proof', 'Car Images', 'Car details'];
 
@@ -57,7 +63,7 @@ const PersonalDetailsScreen = () => {
   );
 
   const handleContinue = () => {
-    navigation.navigate('UploadRegistration' as never);
+    navigation.navigate('UploadRegistration');
   };
 
   const handleAddLocation = () => {
@@ -83,7 +89,7 @@ const PersonalDetailsScreen = () => {
     );
   };
 
-  const handleLocationSelect = (location: any) => {
+  const handleLocationSelect = (location) => {
     setLocationData({
       ...locationData,
       fullAddress: location.name + ', ' + location.subtitle,
@@ -98,37 +104,13 @@ const PersonalDetailsScreen = () => {
     setShowLocationForm(false);
   };
 
-  const handleMapPinDragEnd = (e: any) => {
+  const handleMapPinDragEnd = (e) => {
     const { latitude, longitude } = e.nativeEvent.coordinate;
     setLocationData({
       ...locationData,
       latitude,
       longitude,
     });
-    // Here you can add reverse geocoding to get address from coordinates
-    reverseGeocode(latitude, longitude);
-  };
-
-  const reverseGeocode = async (latitude: number, longitude: number) => {
-    try {
-      // You can use Google Geocoding API or any other service
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=YOUR_API_KEY`
-      );
-      const data = await response.json();
-      if (data.results && data.results[0]) {
-        const address = data.results[0].formatted_address;
-        setLocationData({
-          ...locationData,
-          latitude,
-          longitude,
-          fullAddress: address,
-          location: address.split(',')[0],
-        });
-      }
-    } catch (error) {
-      console.log('Reverse geocoding error:', error);
-    }
   };
 
   const handleConfirmMapLocation = () => {
@@ -152,12 +134,201 @@ const PersonalDetailsScreen = () => {
     setShowMapView(false);
   };
 
+  // Image Picker Functions
+  const requestCameraPermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'Camera Permission',
+            message: 'This app needs access to your camera',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          }
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const requestStoragePermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          {
+            title: 'Storage Permission',
+            message: 'This app needs access to your storage',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          }
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const handleImagePicker = async (type) => {
+    console.log('Image picker triggered for:', type);
+    
+    Alert.alert(
+      'Select Image',
+      'Choose an option',
+      [
+        {
+          text: 'Gallery',
+          onPress: () => launchImagePicker(type),
+        },
+        {
+          text: 'Camera',
+          onPress: () => launchCameraPicker(type),
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ]
+    );
+  };
+
+  const launchImagePicker = (type) => {
+    const options = {
+      mediaType: 'photo',
+      quality: 0.8,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      includeBase64: false,
+    };
+
+    launchImageLibrary(options, (response) => {
+      console.log('Image Picker Response:', response);
+      
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+        Alert.alert('Error', 'Failed to pick image: ' + response.error);
+      } else if (response.assets && response.assets[0]) {
+        const image = response.assets[0];
+        handleImageSelection(type, image);
+      }
+    });
+  };
+
+  const launchCameraPicker = (type) => {
+    const options = {
+      mediaType: 'photo',
+      quality: 0.8,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      saveToPhotos: true,
+      includeBase64: false,
+    };
+
+    launchCamera(options, (response) => {
+      console.log('Camera Response:', response);
+      
+      if (response.didCancel) {
+        console.log('User cancelled camera');
+      } else if (response.error) {
+        console.log('Camera Error: ', response.error);
+        Alert.alert('Error', 'Failed to capture image: ' + response.error);
+      } else if (response.assets && response.assets[0]) {
+        const image = response.assets[0];
+        handleImageSelection(type, image);
+      }
+    });
+  };
+
+  const handleImageSelection = (type, image) => {
+    const fileSize = image.fileSize || 0;
+    const maxSize = type === 'profile' ? 5 * 1024 * 1024 : 25 * 1024 * 1024;
+
+    if (fileSize > maxSize) {
+      Alert.alert(
+        'File Too Large',
+        type === 'profile' 
+          ? 'Please select an image smaller than 5MB'
+          : 'Please select an image smaller than 25MB'
+      );
+      return;
+    }
+
+    console.log('Image selected:', image);
+    
+    switch (type) {
+      case 'profile':
+        setProfilePicture(image);
+        break;
+      case 'front':
+        setFrontSideImage(image);
+        break;
+      case 'back':
+        setBackSideImage(image);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const renderUploadSection = (type, image, description, maxSizeText) => {
+    const hasImage = image !== null;
+    
+    return (
+      <TouchableOpacity 
+        style={[
+          type === 'profile' ? styles.uploadBox : styles.uploadCard,
+          hasImage && styles.uploadContainerWithImage
+        ]}
+        onPress={() => {
+          console.log('Upload section pressed:', type);
+          handleImagePicker(type);
+        }}
+        activeOpacity={0.7}
+      >
+        {hasImage ? (
+          <View style={styles.imagePreviewContainer}>
+            <Image 
+              source={{ uri: image.uri }} 
+              style={styles.previewImage}
+              resizeMode="cover"
+            />
+            <View style={styles.imageOverlay}>
+              <Text style={styles.changeImageText}>Change Image</Text>
+            </View>
+          </View>
+        ) : (
+          <>
+            <View style={type === 'profile' ? styles.uploadIconContainer : styles.uploadCardIconContainer}>
+              <Text style={styles.uploadPlaceholderText}>+</Text>
+            </View>
+            <Text style={type === 'profile' ? styles.uploadText : styles.uploadCardText}>
+              {description}
+            </Text>
+            <Text style={styles.uploadCardSize}>{maxSizeText}</Text>
+          </>
+        )}
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image source={require('./assets/back.png')} style={styles.backIcon} />
+          <Text style={styles.backButton}>←</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.saveButton}>
           <Text style={styles.saveButtonText}>SAVE & EXIT</Text>
@@ -172,21 +343,23 @@ const PersonalDetailsScreen = () => {
               <Text style={[
                 styles.tabText,
                 activeTab === index && styles.tabTextActive
-              ]}>
+              ]} numberOfLines={1}>
                 {tab}
               </Text>
-              <View style={[
-                styles.tabCircle,
-                activeTab === index && styles.tabCircleActive,
-                activeTab > index && styles.tabCircleCompleted
-              ]}>
-                {activeTab > index ? (
-                  <Text style={styles.checkmark}>✓</Text>
-                ) : activeTab === index ? (
-                  <View style={styles.tabDot} />
-                ) : (
-                  <View style={styles.tabEmptyInner} />
-                )}
+              <View style={styles.circleContainer}>
+                <View style={[
+                  styles.tabCircle,
+                  activeTab === index && styles.tabCircleActive,
+                  activeTab > index && styles.tabCircleCompleted
+                ]}>
+                  {activeTab > index ? (
+                    <Text style={styles.checkmark}>✓</Text>
+                  ) : activeTab === index ? (
+                    <View style={styles.tabDot} />
+                  ) : (
+                    <View style={styles.tabEmptyInner} />
+                  )}
+                </View>
               </View>
             </View>
             {index < tabs.length - 1 && (
@@ -199,14 +372,14 @@ const PersonalDetailsScreen = () => {
         ))}
       </View>
 
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
         {/* Personal Details Section */}
         <Text style={styles.sectionTitle}>Personal details</Text>
-        <Text style={styles.sectionSubtitle}>Enter your basic details to proceed furthur</Text>
+        <Text style={styles.sectionSubtitle}>Enter your basic details to proceed further</Text>
 
         {/* Name Fields */}
         <View style={styles.row}>
@@ -291,19 +464,19 @@ const PersonalDetailsScreen = () => {
 
         {/* Upload Picture */}
         <Text style={styles.label}>Upload your picture</Text>
-        <TouchableOpacity style={styles.uploadBox}>
-          <View style={styles.uploadIconContainer}>
-            <Image source={require('./assets/upload1.png')} style={styles.uploadIcon} />
-          </View>
-          <Text style={styles.uploadText}>File format png, jpg of size up to 5MB</Text>
-        </TouchableOpacity>
+        {renderUploadSection(
+          'profile', 
+          profilePicture, 
+          'File format png, jpg of size up to 5MB', 
+          '(Max. File size: 5 MB)'
+        )}
 
         {/* Add Location */}
         <Text style={styles.sectionTitle}>Add your current location</Text>
         {locationData.fullAddress ? (
           <View style={styles.locationDisplayCard}>
             <View style={styles.locationDisplayContent}>
-              <Image source={require('./assets/location.png')} style={styles.locationIconSmall} />
+              <Text style={styles.locationIcon}>📍</Text>
               <View style={styles.locationTextContainer}>
                 <Text style={styles.locationDisplayText} numberOfLines={1}>
                   {locationData.fullAddress}
@@ -320,7 +493,7 @@ const PersonalDetailsScreen = () => {
             </TouchableOpacity>
           </View>
         ) : (
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.addLocationButton}
             onPress={handleAddLocation}
           >
@@ -346,30 +519,28 @@ const PersonalDetailsScreen = () => {
 
         {/* Front Side Upload */}
         <Text style={styles.label}>Front Side of Card*</Text>
-        <TouchableOpacity style={styles.uploadCard}>
-          <View style={styles.uploadCardIconContainer}>
-            <Image source={require('./assets/upload2.png')} style={styles.uploadCardIcon} />
-          </View>
-          <Text style={styles.uploadCardText}>Click to Upload Front Side of Card</Text>
-          <Text style={styles.uploadCardSize}>(Max. File size: 25 MB)</Text>
-        </TouchableOpacity>
+        {renderUploadSection(
+          'front', 
+          frontSideImage, 
+          'Click to Upload Front Side of Card', 
+          '(Max. File size: 25 MB)'
+        )}
 
         {/* Back Side Upload */}
         <Text style={styles.label}>Back Side of Card*</Text>
-        <TouchableOpacity style={styles.uploadCard}>
-          <View style={styles.uploadCardIconContainer}>
-            <Image source={require('./assets/upload2.png')} style={styles.uploadCardIcon} />
-          </View>
-          <Text style={styles.uploadCardText}>Click to Upload Back Side of Card</Text>
-          <Text style={styles.uploadCardSize}>(Max. File size: 25 MB)</Text>
-        </TouchableOpacity>
+        {renderUploadSection(
+          'back', 
+          backSideImage, 
+          'Click to Upload Back Side of Card', 
+          '(Max. File size: 25 MB)'
+        )}
 
         <View style={styles.bottomSpacing} />
       </ScrollView>
 
       {/* Continue Button */}
       <View style={styles.footer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.continueButton}
           onPress={handleContinue}
           activeOpacity={0.8}
@@ -385,18 +556,18 @@ const PersonalDetailsScreen = () => {
         animationType="slide"
         onRequestClose={handleCloseLocationModal}
       >
-        <KeyboardAvoidingView 
+        <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.modalOverlay}
         >
-          <TouchableOpacity 
-            style={styles.modalBackdrop} 
-            activeOpacity={1} 
+          <TouchableOpacity
+            style={styles.modalBackdrop}
+            activeOpacity={1}
             onPress={handleCloseLocationModal}
           />
           <View style={styles.locationBottomSheet}>
             {/* Close Button */}
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.closeButton}
               onPress={handleCloseLocationModal}
             >
@@ -411,11 +582,10 @@ const PersonalDetailsScreen = () => {
                   {/* Map View */}
                   <Text style={styles.modalTitle}>Select Location</Text>
                   <Text style={styles.mapInstructionText}>Move pin to exact parking location</Text>
-                  
+
                   <View style={styles.mapContainer}>
                     <MapView
                       ref={mapRef}
-                      provider={PROVIDER_GOOGLE}
                       style={styles.map}
                       initialRegion={{
                         latitude: locationData.latitude,
@@ -439,14 +609,11 @@ const PersonalDetailsScreen = () => {
                     </MapView>
 
                     {/* Current Location Button */}
-                    <TouchableOpacity 
+                    <TouchableOpacity
                       style={styles.currentLocationButton}
                       onPress={getCurrentLocation}
                     >
-                      <Image 
-                        source={require('./assets/location.png')} 
-                        style={styles.targetIcon} 
-                      />
+                      <Text style={styles.targetIcon}>📍</Text>
                     </TouchableOpacity>
                   </View>
 
@@ -461,7 +628,7 @@ const PersonalDetailsScreen = () => {
                   </View>
 
                   {/* Confirm Location Button */}
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     style={styles.modalConfirmButton}
                     onPress={handleConfirmMapLocation}
                   >
@@ -482,14 +649,11 @@ const PersonalDetailsScreen = () => {
                   />
 
                   {/* Use Current Location Button */}
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     style={styles.useMapButton}
                     onPress={handleUseMapLocation}
                   >
-                    <Image 
-                      source={require('./assets/location.png')} 
-                      style={styles.useMapIcon} 
-                    />
+                    <Text style={styles.useMapIcon}>📍</Text>
                     <Text style={styles.useMapText}>Use map to select location</Text>
                   </TouchableOpacity>
 
@@ -513,7 +677,7 @@ const PersonalDetailsScreen = () => {
                 <>
                   {/* Location Details Form */}
                   <Text style={styles.modalTitle}>Add your current location</Text>
-                  <Text style={styles.modalSubtitle}>Enter your basic details to proceed furthur</Text>
+                  <Text style={styles.modalSubtitle}>Enter your basic details to proceed further</Text>
 
                   <Text style={styles.formLabel}>Location *</Text>
                   <TextInput
@@ -545,7 +709,7 @@ const PersonalDetailsScreen = () => {
               )}
 
               {/* Confirm Button */}
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.modalConfirmButton}
                 onPress={handleConfirmLocation}
               >
@@ -559,6 +723,7 @@ const PersonalDetailsScreen = () => {
   );
 };
 
+// Keep all the same styles from the previous code, but use this simplified version:
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -569,20 +734,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 10,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#F3F4F6',
   },
-  backIcon: {
-    width: 24,
-    height: 24,
-    tintColor: '#000',
+  backButton: {
+    fontSize: 24,
+    color: '#000',
+    fontWeight: 'bold',
   },
   saveButton: {
     backgroundColor: '#7C3AED',
-    paddingHorizontal: 24,
-    paddingVertical: 10,
+    paddingHorizontal: 22,
+    paddingVertical: 8,
     borderRadius: 6,
   },
   saveButtonText: {
@@ -593,23 +758,31 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     paddingVertical: 24,
     backgroundColor: '#FAFAFA',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0',
   },
   tabItem: {
     alignItems: 'center',
     flex: 1,
+    minWidth: 70,
+  },
+  circleContainer: {
+    height: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
   },
   tabText: {
-    fontSize: 12,
+    fontSize: 10,
     color: '#9CA3AF',
     textAlign: 'center',
     fontWeight: '500',
     marginBottom: 8,
+    paddingHorizontal: 4,
   },
   tabTextActive: {
     color: '#000',
@@ -651,15 +824,15 @@ const styles = StyleSheet.create({
   },
   checkmark: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
   },
   tabLine: {
     height: 1,
     backgroundColor: '#E5E7EB',
     flex: 1,
-    marginHorizontal: -8,
-    marginBottom: 8,
+    marginHorizontal: -16,
+    marginTop: 20,
   },
   tabLineActive: {
     backgroundColor: '#7C3AED',
@@ -677,8 +850,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
     color: '#000',
-    marginBottom: 4,
-    marginTop: 8,
+    marginBottom: 2,
   },
   sectionSubtitle: {
     fontSize: 13,
@@ -772,6 +944,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#000',
   },
+  // Upload Styles
   uploadBox: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
@@ -780,6 +953,20 @@ const styles = StyleSheet.create({
     paddingVertical: 48,
     alignItems: 'center',
     marginBottom: 28,
+  },
+  uploadCard: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: '#D1D5DB',
+    borderStyle: 'dashed',
+    borderRadius: 12,
+    paddingVertical: 36,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  uploadContainerWithImage: {
+    padding: 0,
+    overflow: 'hidden',
   },
   uploadIconContainer: {
     width: 56,
@@ -790,14 +977,64 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
-  uploadIcon: {
-    width: 28,
-    height: 28,
-    tintColor: '#7C3AED',
+  uploadCardIconContainer: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#EDE9FE',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 14,
+  },
+  uploadPlaceholderText: {
+    fontSize: 24,
+    color: '#7C3AED',
+    fontWeight: 'bold',
   },
   uploadText: {
     fontSize: 13,
     color: '#6B7280',
+    textAlign: 'center',
+    paddingHorizontal: 16,
+  },
+  uploadCardText: {
+    fontSize: 15,
+    color: '#7C3AED',
+    fontWeight: '600',
+    marginBottom: 6,
+    textAlign: 'center',
+    paddingHorizontal: 16,
+  },
+  uploadCardSize: {
+    fontSize: 13,
+    color: '#9CA3AF',
+    textAlign: 'center',
+    paddingHorizontal: 16,
+  },
+  // Image Preview Styles
+  imagePreviewContainer: {
+    width: '100%',
+    height: 200,
+    position: 'relative',
+  },
+  previewImage: {
+    width: '100%',
+    height: '100%',
+  },
+  imageOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  changeImageText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
   addLocationButton: {
     flexDirection: 'row',
@@ -839,10 +1076,8 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 12,
   },
-  locationIconSmall: {
-    width: 20,
-    height: 20,
-    tintColor: '#7C3AED',
+  locationIcon: {
+    fontSize: 20,
     marginRight: 10,
   },
   locationTextContainer: {
@@ -862,40 +1097,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#7C3AED',
     fontWeight: '600',
-  },
-  uploadCard: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#D1D5DB',
-    borderStyle: 'dashed',
-    borderRadius: 12,
-    paddingVertical: 36,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  uploadCardIconContainer: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: '#EDE9FE',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 14,
-  },
-  uploadCardIcon: {
-    width: 24,
-    height: 24,
-    tintColor: '#7C3AED',
-  },
-  uploadCardText: {
-    fontSize: 15,
-    color: '#7C3AED',
-    fontWeight: '600',
-    marginBottom: 6,
-  },
-  uploadCardSize: {
-    fontSize: 13,
-    color: '#9CA3AF',
   },
   bottomSpacing: {
     height: 20,
@@ -1060,11 +1261,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#7C3AED',
     borderWidth: 4,
     borderColor: '#FFFFFF',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
   },
   currentLocationButton: {
     position: 'absolute',
@@ -1083,9 +1279,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   targetIcon: {
-    width: 24,
-    height: 24,
-    tintColor: '#7C3AED',
+    fontSize: 20,
   },
   mapInstructionText: {
     fontSize: 14,
@@ -1126,9 +1320,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   useMapIcon: {
-    width: 20,
-    height: 20,
-    tintColor: '#7C3AED',
+    fontSize: 20,
   },
   useMapText: {
     fontSize: 15,

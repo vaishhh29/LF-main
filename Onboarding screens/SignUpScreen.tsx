@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   Dimensions,
+  ScrollView,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
@@ -112,26 +113,30 @@ const SignUpScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.content}>
         <Text style={styles.title}>
           Welcome To <Text style={styles.highlight}>Lea-Flexi</Text>
         </Text>
-        <Text style={styles.subtitle}>List your car.Earn with ease.</Text>
+        <Text style={styles.subtitle}>List your car. Earn with ease.</Text>
 
+        {/* Phone input field */}
         <View style={[styles.phoneContainer, { gap: 20 }]}>
           <TouchableOpacity style={styles.countryBox}>
             <Text style={styles.countryText}>{countryCode}</Text>
             <Svg width={18} height={18} viewBox="0 0 24 24">
-            <Path
-              d="M5 9l7 7 7-7"
-              stroke="#666"
-              strokeWidth={1.8}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-            />
-          </Svg>
+              <Path
+                d="M5 9l7 7 7-7"
+                stroke="#666"
+                strokeWidth={1.8}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            </Svg>
           </TouchableOpacity>
           <TextInput
             style={styles.phoneInput}
@@ -154,8 +159,8 @@ const SignUpScreen: React.FC = () => {
           <View style={styles.line} />
         </View>
 
+        {/* Google Sign-In Button */}
         <TouchableOpacity style={styles.googleButton} onPress={handleGoogleSignIn}>
-          {/* ✅ SVG Google Icon */}
           <Svg width={24} height={24} viewBox="0 0 48 48">
             <Path
               fill="#EA4335"
@@ -177,17 +182,16 @@ const SignUpScreen: React.FC = () => {
           <Text style={styles.googleText}>Continue with Google</Text>
         </TouchableOpacity>
 
+        {/* Already a member */}
         <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
           <Text style={styles.bottomText}>
             Already a member? <Text style={styles.links}>Sign In</Text>
           </Text>
         </TouchableOpacity>
-      </View>
 
-      {/* Footer stays unchanged */}
-      <View style={styles.footer}>
+        {/* Footer */}
         <Text style={styles.terms}>
-          By Continuing you agree to the carbon's{' '}
+          By continuing, you agree to Lea-Flexi’s{' '}
           <Text style={styles.link}>Terms & Conditions</Text>
         </Text>
       </View>
@@ -197,22 +201,25 @@ const SignUpScreen: React.FC = () => {
         message={errorMessage}
         onClose={() => setErrorVisible(false)}
       />
-    </View>
+    </ScrollView>
   );
 };
 
 export default SignUpScreen;
 
+/* ---------------------------------------
+   STYLES
+   --------------------------------------- */
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    paddingVertical: 40,
     backgroundColor: '#fff',
-    justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingTop: height / 8, 
   },
   content: {
-    flexShrink: 1,
+    flex: 1,
   },
   title: {
     fontSize: 26,
@@ -228,59 +235,47 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 14,
     color: '#999',
-    marginBottom: 80,
+    marginBottom: 60,
   },
   phoneContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  marginBottom: 25,
-},
-
-countryBox: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderWidth: 1.5,
-  borderColor: '#E5E5E5',
-  borderRadius: 12,
-  backgroundColor: '#fff',
-  paddingHorizontal: 14,
-  height: 56,
-  width: 80,
-  gap: 3, 
-},
-
-dropdown: {
-  fontSize: 26,
-  color: '#666',
-  transform: [{ translateY: 3 }], 
-},
-
-countryText: {
-  fontSize: 16,
-  fontWeight: '500',
-  color: '#000',
-  marginRight: 5,
-},
-
-
-phoneInput: {
-  flex: 1,
-  borderWidth: 1.5,
-  borderColor: '#E5E5E5',
-  borderRadius: 12,
-  backgroundColor: '#fff',
-  height: 56, 
-  paddingHorizontal: 14,
-  fontSize: 16,
-  color: '#000',
-},
-
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 25,
+  },
+  countryBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#E5E5E5',
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    paddingHorizontal: 14,
+    height: 56,
+    width: 80,
+  },
+  countryText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#000',
+    marginRight: 5,
+  },
+  phoneInput: {
+    flex: 1,
+    borderWidth: 1.5,
+    borderColor: '#E5E5E5',
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    height: 56,
+    paddingHorizontal: 14,
+    fontSize: 16,
+    color: '#000',
+  },
   button: {
     backgroundColor: '#7149E1',
     borderRadius: 12,
     padding: 16,
-    marginBottom: 10,
+    marginTop: 10,
   },
   buttonText: {
     color: '#fff',
@@ -288,23 +283,21 @@ phoneInput: {
     fontWeight: '600',
     fontSize: 16,
   },
-dividerContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginVertical: 30,
-},
-
-line: {
-  height: 1,
-  backgroundColor: '#E5E5E5',
-  width: 70, 
-  marginHorizontal: 10,
-},
-
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 30,
+  },
+  line: {
+    height: 1,
+    backgroundColor: '#E5E5E5',
+    width: 80,
+    marginHorizontal: 10,
+  },
   orText: {
     color: '#999',
-    fontSize: 16,
+    fontSize: 15,
   },
   googleButton: {
     flexDirection: 'row',
@@ -313,9 +306,9 @@ line: {
     borderWidth: 1.5,
     borderColor: '#E5E5E5',
     borderRadius: 12,
-    padding: 14,
-    marginBottom: 45,
+    paddingVertical: 14,
     backgroundColor: '#fff',
+    marginBottom: 40,
   },
   googleText: {
     fontSize: 15,
@@ -326,27 +319,24 @@ line: {
   bottomText: {
     textAlign: 'center',
     color: '#666',
-    fontSize: 17,
-    marginBottom: 20,
+    fontSize: 16,
+    marginTop: 10,
+    marginBottom: 25,
   },
   link: {
     color: '#3B3B3B',
     fontWeight: '600',
     textDecorationLine: 'underline',
-    fontSize:16
   },
   links: {
     color: '#7149E1',
     fontWeight: '600',
     textDecorationLine: 'underline',
   },
-  footer: {
-    marginBottom: 100,
-  },
   terms: {
     textAlign: 'center',
     color: '#909090',
     fontSize: 14,
-    lineHeight: 25,
+    lineHeight: 22,
   },
 });

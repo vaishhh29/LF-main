@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
+  StatusBar,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -72,6 +73,7 @@ const BecomeHostScreen = () => {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       {/* Hero Section */}
       <View style={styles.heroSection}>
         <Image
@@ -84,12 +86,12 @@ const BecomeHostScreen = () => {
           <Text style={styles.heroSubtitle}>
             Got questions about renting or leasing a{'\n'}car? We're here to assist you!
           </Text>
-             <View  style={styles.button} >
-              <TouchableOpacity style={styles.getStartedButton} onPress={handleGetStarted}>
-            <Text style={styles.getStartedText}>Get Started</Text>
-            <Text style={styles.arrow}>↗</Text>
-          </TouchableOpacity>
-             </View>
+          <View style={styles.button}>
+            <TouchableOpacity style={styles.getStartedButton} onPress={handleGetStarted}>
+              <Text style={styles.getStartedText}>Get Started</Text>
+              <Text style={styles.arrow}>↗</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
@@ -185,7 +187,7 @@ const BecomeHostScreen = () => {
       <View style={[styles.section, styles.faqSection]}>
         <View style={styles.sectionTitleContainer}>
           <View style={styles.sectionLine} />
-          <Text style={styles.sectionTitle}>HAVE OTHER QUIRES?</Text>
+          <Text style={styles.sectionTitle}>HAVE OTHER QUERIES?</Text>
           <View style={styles.sectionLine} />
         </View>
         
@@ -216,10 +218,13 @@ const BecomeHostScreen = () => {
   );
 };
 
+export default BecomeHostScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+
   },
   heroSection: {
     margin: 15,
@@ -245,7 +250,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   heroSubtitle: {
-    fontSize: 15,
+    fontSize: 12,
     color: '#FFFFFF',
     lineHeight: 22,
     marginBottom: 24,
@@ -260,17 +265,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignSelf: 'flex-start',
   },
-
-  button:{
-    paddingTop:50,
+  button: {
+    paddingTop: 50,
   },
-
   getStartedText: {
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '600',
     marginRight: 6,
-    
   },
   arrow: {
     color: '#FFFFFF',
@@ -278,12 +280,12 @@ const styles = StyleSheet.create({
   },
   section: {
     paddingHorizontal: 22,
-    paddingVertical: 32,
+    paddingVertical: 10,
   },
   sectionTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 25,
   },
   sectionLine: {
     flex: 1,
@@ -467,5 +469,3 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
-
-export default BecomeHostScreen;

@@ -1,11 +1,10 @@
-import React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import messaging from '@react-native-firebase/messaging';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { NavigationContainer, DefaultTheme, Theme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-// import {Feather} from 'react-native-vector-icons/Feather';
+import { Image, StatusBar } from 'react-native';
 
 // --- Onboarding Screens ---
 import SplashScreen from './Onboarding screens/SplashScreen';
@@ -32,27 +31,19 @@ import ProfileScreen from './ProfileScreen/profile';
 import NotificationScreen from './ProfileScreen/NotificationScreen';
 
 // --- Booking Screens ---
-// New BookingsScreen with tabs (Upcoming, Ongoing, Completed)
 import BookingsScreen from './Booking screens/BookingsScreen';
-// Original RatingScreen (can be accessed from BookingsScreen)
 import RatingScreen from './Booking screens/RatingScreen';
-<<<<<<< HEAD
 import UpcomingSubmission from './Booking screens/UpcomingSubmission';
-=======
 import EndTripScreen from './Booking screens/EndTripScreen';
 
->>>>>>> 7d3684e7f5d5b85290e005af1a368d798a3b1f45
 // --- Report Flow Screens ---
-// Import the new report screens for user reporting functionality
 import UserProfileScreen from './ProfileScreen/DriverScreen';
 import ReportItemsScreen from './ProfileScreen/ReportItemsScreen';
 import ReportMethodsScreen from './ProfileScreen/ReportMethodsScreen';
 import AppPermissionScreen from './ProfileScreen/AppPermissionScreen';
 
 // --- Policy & Settings Screens ---
-// Privacy Policy screen with expandable sections
 import PrivacyPolicyScreen from './ProfileScreen/PrivacyPolicyScreen';
-import { Image } from 'react-native';
 import UpcomingBookingDetailScreen from './Booking screens/UpcomingBookingDetailScreen';
 import UpcomingDetailScreen from './Booking screens/UpcomingDetailScreen';
 import EnterCodeScreen from './Booking screens/EnterCodeScreen';
@@ -64,34 +55,91 @@ import EditProfileScreen from './ProfileScreen/EditProfileScreen';
 import CarListingScreen from './Earning/CarListingScreen';
 import CarDetailsScreen from './Completed screens/CarDetailsScreen';
 import CarDetailListingScreen from './Earning/CarDetailListingScreen';
-// --- Stack & Tab Navigators ---
+
 const RootStack = createNativeStackNavigator();
 const OnboardingStackNav = createNativeStackNavigator();
 const HostStackNav = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-/* ----------------------
-   Bottom Tabs Navigator
-   ----------------------
-   Main navigation tabs for authenticated users:
-   - Home: Browse and manage cars
-   - Earnings: View financial data
-   - Bookings: View and manage all bookings (Upcoming, Ongoing, Completed)
-   - Profile: User profile and settings
----------------------- */
+/* ---------------------------------------
+   🎨 App Theme
+   --------------------------------------- */
+const AppTheme: Theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#7C3AED',
+    background: '#FFFFFF',
+    card: '#FFFFFF',
+    text: '#111827',
+    border: '#E5E7EB',
+    notification: '#7C3AED',
+  },
+};
+
+/* ---------------------------------------
+   SafeArea Wrapper Helper
+   --------------------------------------- */
+const withSafeArea = (Component: React.FC<any>) => () => (
+  <SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
+    <Component />
+  </SafeAreaView>
+);
+
+const HomePageWithSafeArea = withSafeArea(HomePage);
+const EarningsWithSafeArea = withSafeArea(Earnings);
+const BookingsScreenWithSafeArea = withSafeArea(BookingsScreen);
+const ProfileScreenWithSafeArea = withSafeArea(ProfileScreen);
+const SplashScreenWithSafeArea = withSafeArea(SplashScreen);
+const SignUpScreenWithSafeArea = withSafeArea(SignUpScreen);
+const SignInScreenWithSafeArea = withSafeArea(SignInScreen);
+const OTPScreenWithSafeArea = withSafeArea(OTPScreen);
+const BecomeHostScreenWithSafeArea = withSafeArea(BecomeHostScreen);
+const CarDetailsScreenWithSafeArea = withSafeArea(CarDetailsScreen);
+const CarImageUploadScreenWithSafeArea = withSafeArea(CarImageUploadScreen);
+const PersonalDetailsScreenWithSafeArea = withSafeArea(PersonalDetailsScreen);
+const PersonalLocationWithSafeArea = withSafeArea(PersonalLocation);
+const UploadRegistrationScreenWithSafeArea = withSafeArea(UploadRegistrationScreen);
+const SubmissionSuccessScreenWithSafeArea = withSafeArea(SubmissionSuccessScreen);
+const CarDetailsListScreenWithSafeArea = withSafeArea(CarDetailsListScreen);
+const NotificationScreenWithSafeArea = withSafeArea(NotificationScreen);
+const EditProfileScreenWithSafeArea = withSafeArea(EditProfileScreen);
+const UserProfileScreenWithSafeArea = withSafeArea(UserProfileScreen);
+const ReportItemsScreenWithSafeArea = withSafeArea(ReportItemsScreen);
+const ReportMethodsScreenWithSafeArea = withSafeArea(ReportMethodsScreen);
+const AppPermissionScreenWithSafeArea = withSafeArea(AppPermissionScreen);
+const PrivacyPolicyScreenWithSafeArea = withSafeArea(PrivacyPolicyScreen);
+const SupportChatWithSafeArea = withSafeArea(SupportChat);
+const DriverScreenWithSafeArea = withSafeArea(DriverScreen);
+const RatingScreenWithSafeArea = withSafeArea(RatingScreen);
+const UpcomingSubmissionWithSafeArea = withSafeArea(UpcomingSubmission);
+const EndTripScreenWithSafeArea = withSafeArea(EndTripScreen);
+const UpcomingBookingDetailScreenWithSafeArea = withSafeArea(UpcomingBookingDetailScreen);
+const UpcomingDetailScreenWithSafeArea = withSafeArea(UpcomingDetailScreen);
+const EnterCodeScreenWithSafeArea = withSafeArea(EnterCodeScreen);
+const CompletedBookingsScreenWithSafeArea = withSafeArea(CompletedBookingsScreen);
+const BookingDetailsScreenWithSafeArea = withSafeArea(BookingDetailsScreen);
+const CarListingScreenWithSafeArea = withSafeArea(CarListingScreen);
+const CarDetailListingScreenWithSafeArea = withSafeArea(CarDetailListingScreen);
+const CarAddDetailsWithSafeArea = withSafeArea(CarAddDetails);
+const GetBackSoonWithSafeArea = withSafeArea(GetBackSoon);
+const CarListDetailsScreenWithSafeArea = withSafeArea(CarListDetailsScreen);
+
+/* ---------------------------------------
+   🧭 Bottom Tab Navigator
+   --------------------------------------- */
 const BottomTabs = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
       headerShown: false,
       tabBarShowLabel: true,
-      tabBarActiveTintColor: '#6D38E8',
-      tabBarInactiveTintColor: '#9E9E9E',
+      tabBarActiveTintColor: '#7C3AED',
+      tabBarInactiveTintColor: '#9CA3AF',
       tabBarStyle: {
         backgroundColor: '#FFFFFF',
         borderTopWidth: 0.5,
         borderTopColor: '#E0E0E0',
         height: 60,
-        paddingBottom: 6,
       },
       tabBarIcon: ({ color, size }) => {
         const icons: Record<string, any> = {
@@ -100,13 +148,13 @@ const BottomTabs = () => (
           Bookings: require('./Booking screens/assets/bookings.png'),
           Profile: require('./Booking screens/assets/profile.png'),
         };
-       return (
+        return (
           <Image
             source={icons[route.name]}
             style={{
               width: size,
               height: size,
-              tintColor: color, // makes icon adapt to active/inactive color
+              tintColor: color,
               resizeMode: 'contain',
             }}
           />
@@ -114,311 +162,89 @@ const BottomTabs = () => (
       },
     })}
   >
-    <Tab.Screen name="Home" component={HomePage} />
-    <Tab.Screen name="Earnings" component={Earnings} />
-
-    {/* Updated Bookings tab to use new BookingsScreen with tabs */}
-    <Tab.Screen name="Bookings" component={BookingsScreen} />
-    <Tab.Screen name="Profile" component={ProfileScreen} />
-    
+    <Tab.Screen name="Home" component={HomePageWithSafeArea} />
+    <Tab.Screen name="Earnings" component={EarningsWithSafeArea} />
+    <Tab.Screen name="Bookings" component={BookingsScreenWithSafeArea} />
+    <Tab.Screen name="Profile" component={ProfileScreenWithSafeArea} />
   </Tab.Navigator>
 );
 
-/* ----------------------
-   Onboarding Stack Navigator
-   ----------------------
-   Handles the initial user authentication flow:
-   1. Splash: App loading screen
-   2. SignUp: New user registration
-   3. SignIn: Existing user login
-   4. OTP: Phone verification
----------------------- */
-const OnboardingStack = () => (
-  <OnboardingStackNav.Navigator screenOptions={{ headerShown: false }}>
-    <OnboardingStackNav.Screen name="Splash" component={SplashScreen} />
-    <OnboardingStackNav.Screen name="SignUp" component={SignUpScreen} />
-    <OnboardingStackNav.Screen name="SignIn" component={SignInScreen} />
-    <OnboardingStackNav.Screen name="OTP" component={OTPScreen} />
-  </OnboardingStackNav.Navigator>
-);
-
-/* ----------------------
-   Host Registration Stack
-   ----------------------
-   Multi-step flow for users to become car hosts:
-   1. BecomeHost: Introduction and benefits
-   2. CarDetails: Enter car information
-   3. CarImageUpload: Upload car photos
-   4. PersonalDetails: Host personal information
-   5. PersonalLocation: Set pickup location
-   6. UploadRegistration: Upload documents
-   7. SubmissionSuccess: Confirmation screen
----------------------- */
-const HostRegistrationStack = () => (
-  <HostStackNav.Navigator screenOptions={{ headerShown: false }}>
-    <HostStackNav.Screen name="BecomeHost" component={BecomeHostScreen} />
-    <HostStackNav.Screen name="CarDetails" component={CarDetailsScreen} />
-    <HostStackNav.Screen name="CarImageUpload" component={CarImageUploadScreen} />
-    <HostStackNav.Screen name="PersonalDetails" component={PersonalDetailsScreen} />
-    <HostStackNav.Screen name="PersonalLocation" component={PersonalLocation} />
-    <HostStackNav.Screen name="UploadRegistration" component={UploadRegistrationScreen} />
-    <HostStackNav.Screen name="SubmissionSuccess" component={SubmissionSuccessScreen} />
-    <HostStackNav.Screen name="CarDetailson" component={CarDetailsListScreen} />
-
-  </HostStackNav.Navigator>
-);
-
-/* ----------------------
-   Root App Navigator
-   ----------------------
-   Top-level navigator that controls the entire app flow:
-   - Onboarding: Authentication screens
-   - HostRegistration: Host signup process
-   - MainTabs: Main app with bottom tabs (includes new BookingsScreen)
-   - RatingScreen: Booking rating/review (can be accessed from BookingsScreen)
-   - UserProfile: View user profile (for reporting)
-   - ReportItems: Select report category
-   - ReportMethods: Select specific report method
-   - AppPermissionScreen: Manage app permissions
-   - PrivacyPolicy: View privacy policy with expandable sections
-   
-   These screens are accessible from various places in the app
-   and sit at the root level for easy navigation.
----------------------- */
+/* ---------------------------------------
+   Root App
+   --------------------------------------- */
 const App = () => {
- useEffect(() => {
-  const getToken = async () => {
-    try {
-      const token = await messaging().getToken();
-      console.log(' FCM Token:', token);
-    } catch (error) {
-      console.error('Error getting FCM token:', error);
-    }
+  const [isLightScreen, setIsLightScreen] = useState(false);
+  const navRef = useRef<any>(null);
+
+  useEffect(() => {
+    const getToken = async () => {
+      try {
+        const token = await messaging().getToken();
+        console.log('FCM Token:', token);
+      } catch (error) {
+        console.error('Error getting FCM token:', error);
+      }
+    };
+    getToken();
+  }, []);
+
+  const handleStateChange = () => {
+    const currentRoute = navRef.current?.getCurrentRoute()?.name;
+    const whiteScreens = [
+      'SignIn',
+      'SignUp',
+      'Profile',
+      'Bookings',
+      'Earnings',
+      'PersonalDetails',
+      'UploadRegistration',
+      'PrivacyPolicy',
+      'NotificationScreen',
+      'EditProfileScreen',
+      'CarDetailsScreen',
+    ];
+    setIsLightScreen(whiteScreens.includes(currentRoute));
   };
-
-  getToken();
-}, []);
-
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
+      <StatusBar
+        backgroundColor={isLightScreen ? '#FFFFFF' : '#7C3AED'}
+        barStyle={isLightScreen ? 'dark-content' : 'light-content'}
+        animated
+      />
+
+      <NavigationContainer ref={navRef} onStateChange={handleStateChange} theme={AppTheme}>
         <RootStack.Navigator
-          screenOptions={{ headerShown: false }}
           initialRouteName="Onboarding"
+          screenOptions={{
+            headerShown: true,
+            headerShadowVisible: false,
+            animation: 'slide_from_right',
+            headerStyle: {
+              backgroundColor: isLightScreen ? '#FFFFFF' : '#7C3AED',
+            },
+            headerTintColor: isLightScreen ? '#111827' : '#FFFFFF',
+            headerTitleStyle: {
+              fontWeight: '600',
+              fontSize: 17,
+            },
+          }}
         >
-          {/* Onboarding Flow - User authentication */}
-          <RootStack.Screen name="Onboarding" component={OnboardingStack} />
-          <RootStack.Screen name="EditProfileScreen" component={EditProfileScreen} />
+          {/* Onboarding Flow */}
+          <RootStack.Screen name="Onboarding" component={SplashScreenWithSafeArea} options={{ headerShown: false }} />
+          <RootStack.Screen name="SignIn" component={SignInScreenWithSafeArea} options={{ title: 'Sign In' }} />
+          <RootStack.Screen name="SignUp" component={SignUpScreenWithSafeArea} options={{ title: 'Sign Up' }} />
 
-          {/* Host Registration Flow - Become a car host */}
-          <RootStack.Screen name="HostRegistration" component={HostRegistrationStack} />
-
-          {/* Main App with Bottom Tabs - Primary app navigation */}
-          <RootStack.Screen name="MainTabs" component={BottomTabs} />
-
-
-          {/* Booking Related Screens */}
-          {/* RatingScreen: Rate and review a completed booking */}
-           <RootStack.Screen 
-            name="UpcomingBookingDetailScreen" 
-            component={UpcomingBookingDetailScreen} 
-            options={{
-              presentation: 'card',
-              animation: 'slide_from_right',
-            }}
-          />
- <RootStack.Screen 
-            name="UpcomingDetailScreen" 
-            component={UpcomingDetailScreen} 
-            options={{
-              presentation: 'card',
-              animation: 'slide_from_right',
-            }}
-          />
-          <RootStack.Screen 
-            name="CompletedBookingsScreen" 
-            component={CompletedBookingsScreen} 
-            options={{
-              presentation: 'card',
-              animation: 'slide_from_right',
-            }}
-          />
-          <RootStack.Screen 
-            name="BookingDetailsScreen" 
-            component={BookingDetailsScreen} 
-            options={{
-              presentation: 'card',
-              animation: 'slide_from_right',
-            }}
-          />
-          <RootStack.Screen 
-            name="CarDetailsScreen" 
-            component={CarDetailsScreen} 
-            options={{
-              presentation: 'card',
-              animation: 'slide_from_right',
-            }}
-          />
-
-          <RootStack.Screen 
-            name="EndTripScreen" 
-            component={EndTripScreen}
-            options={{
-              presentation: 'card',
-              animation: 'slide_from_right',
-            }}
-          />
-
-           <RootStack.Screen 
-            name="CarDetail" 
-            component={CarDetailListingScreen} 
-            options={{
-              presentation: 'card',
-              animation: 'slide_from_right',
-            }}
-          />
-          <RootStack.Screen 
-          name="CarCard" 
-          component={CarListingScreen} 
-          options={{
-            presentation: 'card',
-            animation: 'slide_from_right',
-          }}
-        />
-         <RootStack.Screen 
-          name="EarningCarAddDetails" 
-          component={CarAddDetails} 
-          options={{
-            presentation: 'card',
-            animation: 'slide_from_right',
-          }}
-        />
-
-          <RootStack.Screen 
-            name="EnterCodeScreen" 
-            component={EnterCodeScreen} 
-            options={{
-              presentation: 'card',
-              animation: 'slide_from_right',
-            }}
-          />
-
-        <RootStack.Screen 
-            name="GetBackSoon" 
-            component={GetBackSoon} 
-            options={{
-              presentation: 'card',
-              animation: 'slide_from_right',
-            }}
-          />
-
-
-
-          <RootStack.Screen 
-            name="RatingScreen" 
-            component={RatingScreen}
-            options={{
-              presentation: 'card',
-              animation: 'slide_from_right',
-            }}
-          />
-           <RootStack.Screen 
-            name="UpcomingSubmission" 
-            component={UpcomingSubmission}
-            options={{
-              presentation: 'card',
-              animation: 'slide_from_right',
-            }}
-          />
-          <RootStack.Screen 
-            name="DriverScreen" 
-            component={DriverScreen}
-            options={{
-              presentation: 'card'
-            }}
-          />
-          {/* Report Flow Screens - User reporting functionality */}
-          {/* UserProfile: Displays user details with option to report */}
-          <RootStack.Screen 
-            name="UserProfile" 
-            component={UserProfileScreen}
-            options={{
-              presentation: 'card',
-            }}
-          />
-          
-          {/* ReportItems: Lists main report categories */}
-          <RootStack.Screen 
-            name="ReportItems" 
-            component={ReportItemsScreen}
-            options={{
-              presentation: 'card',
-            }}
-          />
-          
-          {/* ReportMethods: Shows specific reporting methods */}
-          <RootStack.Screen 
-            name="ReportMethods" 
-            component={ReportMethodsScreen}
-            options={{
-              presentation: 'card',
-            }}
-          />
-
-          {/* Settings & Policy Screens */}
-          {/* AppPermissionScreen: Manage app permissions (camera, location, etc.) */}
-          <RootStack.Screen 
-            name="AppPermissionScreen" 
-            component={AppPermissionScreen} 
-            options={{ 
-              presentation: 'card', 
-              headerShown: true, 
-              title: 'App Permissions',
-              animation: 'slide_from_right',
-            }} 
-          />
-
-          {/* PrivacyPolicy: Displays app policies with expandable accordion sections */}
-          <RootStack.Screen 
-            name="PrivacyPolicy" 
-            component={PrivacyPolicyScreen}
-            options={{
-              presentation: 'card',
-              animation: 'slide_from_right',
-            }}
-          />
-
-          <RootStack.Screen 
-            name="NotificationScreen" 
-            component={NotificationScreen} 
-            options={{ 
-              presentation: 'card', 
-              headerShown: true, 
-              title: 'Notifications',
-              animation: 'slide_from_right',
-            }} 
-          />
-
-           <RootStack.Screen 
-            name="SupportChat" 
-            component={SupportChat} 
-            options={{ 
-              presentation: 'card', 
-              headerShown: true, 
-              title: 'Help & Support',
-              animation: 'slide_from_right',
-            }} 
-          />
-          <RootStack.Screen 
-          name="CarListDetails" 
-          component={CarListDetailsScreen} 
-          options={{
-            presentation: 'card',
-            animation: 'slide_from_right',
-          }} 
-        />
-
+          {/* Main Flow */}
+          <RootStack.Screen name="MainTabs" component={BottomTabs} options={{ headerShown: false }} />
+          <RootStack.Screen name="HostRegistration" component={BecomeHostScreenWithSafeArea} options={{ title: 'Become a Host',headerShown:false }} />
+          <RootStack.Screen name="PersonalDetails" component={PersonalDetailsScreenWithSafeArea} options={{ title: 'Personal Details',headerShown: false }} />
+          <RootStack.Screen name="UploadRegistration" component={UploadRegistrationScreenWithSafeArea} options={{ title: 'Upload RC',headerShown: false }} />
+          <RootStack.Screen name="NotificationScreen" component={NotificationScreenWithSafeArea} options={{ title: 'Notifications' }} />
+          <RootStack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreenWithSafeArea} options={{ title: 'Privacy Policy' }} />
+          <RootStack.Screen name="EditProfileScreen" component={EditProfileScreenWithSafeArea} options={{ title: 'Edit Profile' }} />
+          <RootStack.Screen name="SupportChat" component={SupportChatWithSafeArea} options={{ title: 'Help & Support' }} />
         </RootStack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
