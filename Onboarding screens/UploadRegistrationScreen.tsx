@@ -48,14 +48,103 @@ const COLORS = [
 const KM_OPTIONS = [1000, 2000, 4000, 6000, 8000];
 const LICENSE_REGEX = /^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/;
 
-// Types
-interface DropdownModalProps {
-  visible: boolean;
-  data: string[];
-  title: string;
-  onSelect: (value: string) => void;
-  onClose: () => void;
-}
+// ✅ Updated WhyPopup (sticky to Why button)
+const WhyPopup = ({ visible, onClose, whyButtonRef }) => {
+  const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
+
+  useEffect(() => {
+    if (visible && whyButtonRef.current) {
+      // Get the position of the Why button
+      whyButtonRef.current.measure((x, y, width, height, pageX, pageY) => {
+        setButtonPosition({
+          x: pageX,
+          y: pageY,
+          width: width,
+          height: height
+        });
+      });
+    }
+  }, [visible, whyButtonRef]);
+
+  if (!visible) return null;
+
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      {/* Dismiss on outside tap */}
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={onClose}
+        style={whyPopupStyles.overlay}
+      >
+        {/* Tooltip box positioned relative to Why button */}
+        <View style={[
+          whyPopupStyles.box,
+          {
+            top: buttonPosition.y + buttonPosition.height + 8, // 8px below the button
+            right: 16, // Align with the right edge of screen
+          }
+        ]}>
+          {/* Upward pointing arrow at the top */}
+          <View style={[
+            whyPopupStyles.arrowUp,
+            {
+              right: buttonPosition.width / 2 - 6, // Center the arrow above the Why button
+            }
+          ]} />
+          <Text style={whyPopupStyles.text}>
+            We will automatically{'\n'}
+            fetch your car details{'\n'}
+            based on license{'\n'}
+            number
+          </Text>
+        </View>
+      </TouchableOpacity>
+    </Modal>
+  );
+};
+
+const whyPopupStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'transparent',
+  },
+  box: {
+    position: 'absolute',
+    backgroundColor: '#1F2937',
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    maxWidth: 260,
+    shadowColor: '#000',
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 8,
+  },
+  text: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+  arrowUp: {
+    position: 'absolute',
+    top: -6, // Position above the box
+    width: 0,
+    height: 0,
+    borderLeftWidth: 6,
+    borderRightWidth: 6,
+    borderBottomWidth: 6,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: '#1F2937',
+  },
+});
 
 const UploadRegistrationScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -71,6 +160,7 @@ const UploadRegistrationScreen: React.FC = () => {
   const [carColor, setCarColor] = useState('');
   const [kilometers, setKilometers] = useState(1000);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showWhyPopup, setShowWhyPopup] = useState(false);
 
   // Dropdown states
   const [showModelDropdown, setShowModelDropdown] = useState(false);
@@ -78,7 +168,8 @@ const UploadRegistrationScreen: React.FC = () => {
   const [showYearDropdown, setShowYearDropdown] = useState(false);
   const [showColorDropdown, setShowColorDropdown] = useState(false);
 
-  // Animation
+  // Refs
+  const whyButtonRef = useRef(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   // Effects
@@ -195,7 +286,7 @@ const UploadRegistrationScreen: React.FC = () => {
         carColor,
         kilometers,
       });
-      navigation.navigate('CarImageUpload'); // FIXED: Removed 'as never'
+      navigation.navigate('CarImageUpload');
     }
   };
 
@@ -339,7 +430,11 @@ const UploadRegistrationScreen: React.FC = () => {
           <Text style={[styles.hintText, licenseError && styles.errorText]}>
             {licenseError || 'Please enter in "DL04AN1234" format'}
           </Text>
-          <TouchableOpacity>
+          {/* Updated Why Button with ref */}
+          <TouchableOpacity 
+            ref={whyButtonRef}
+            onPress={() => setShowWhyPopup(true)}
+          >
             <Text style={styles.whyText}>Why?</Text>
           </TouchableOpacity>
         </View>
@@ -541,10 +636,18 @@ const UploadRegistrationScreen: React.FC = () => {
         onSelect={setCarColor}
         onClose={() => setShowColorDropdown(false)}
       />
+
+      {/* Why Popup Modal - Now sticky to Why button */}
+      <WhyPopup 
+        visible={showWhyPopup}
+        onClose={() => setShowWhyPopup(false)}
+        whyButtonRef={whyButtonRef}
+      />
     </SafeAreaView>
   );
 };
 
+// ... (keep all your existing styles exactly the same)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -587,7 +690,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 24,
     backgroundColor: '#FAFAFA',
-    alignItems: 'center', // Change to center
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0',
   },
@@ -595,12 +698,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     minWidth: 70,
-  },
-  circleContainer: {
-    height: 32, // Consistent height for all
-    width: 32,  // Consistent width for all
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   tabText: {
     fontSize: 10,
@@ -614,7 +711,6 @@ const styles = StyleSheet.create({
     color: '#000',
     fontWeight: '600',
   },
-  // Use consistent 24px circles for all states
   tabCircle: {
     width: 24,
     height: 24,
@@ -927,7 +1023,7 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   thumbOuter: {
-    width: 100, // Slightly larger outer circle
+    width: 100,
     height: 100,
     borderRadius: 25,
     justifyContent: 'center',
@@ -942,9 +1038,9 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   thumbInner: {
-    width: 30, // Increased from 16 to 24 (50% larger)
-    height: 30, // Increased from 16 to 24 (50% larger)
-    borderRadius: 12, // Increased from 8 to 12
+    width: 30,
+    height: 30,
+    borderRadius: 12,
     backgroundColor: '#FFFFFF',
   },
 });

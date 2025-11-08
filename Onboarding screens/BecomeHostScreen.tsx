@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   stepWrapper: {
-    marginBottom: 24,
+    marginBottom:10,
   },
   stepRow: {
     flexDirection: 'row',
