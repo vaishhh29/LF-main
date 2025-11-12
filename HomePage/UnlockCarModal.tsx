@@ -272,7 +272,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E5E7EB',
     borderRadius: 12,
-    marginBottom: 12,
     backgroundColor: '#FFFFFF',
   },
   addressOptionSelected: { borderColor: '#7C3AED', backgroundColor: '#FAF5FF' },
@@ -298,14 +297,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#1F2937',
-    marginBottom: 4,
+    
   },
   addressText: { fontSize: 14, color: '#6B7280' },
 
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 24,
+    
   },
   shareCarButton: {
   width: '100%',
@@ -313,6 +312,7 @@ const styles = StyleSheet.create({
   borderRadius: 12,
   backgroundColor: '#3B82F6', // Blue color for car button
   alignItems: 'center',
+    
 },
 shareCarButtonText: {
   fontSize: 16,

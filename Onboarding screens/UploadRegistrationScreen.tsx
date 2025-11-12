@@ -48,103 +48,14 @@ const COLORS = [
 const KM_OPTIONS = [1000, 2000, 4000, 6000, 8000];
 const LICENSE_REGEX = /^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/;
 
-// ✅ Updated WhyPopup (sticky to Why button)
-const WhyPopup = ({ visible, onClose, whyButtonRef }) => {
-  const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
-
-  useEffect(() => {
-    if (visible && whyButtonRef.current) {
-      // Get the position of the Why button
-      whyButtonRef.current.measure((x, y, width, height, pageX, pageY) => {
-        setButtonPosition({
-          x: pageX,
-          y: pageY,
-          width: width,
-          height: height
-        });
-      });
-    }
-  }, [visible, whyButtonRef]);
-
-  if (!visible) return null;
-
-  return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      {/* Dismiss on outside tap */}
-      <TouchableOpacity
-        activeOpacity={1}
-        onPress={onClose}
-        style={whyPopupStyles.overlay}
-      >
-        {/* Tooltip box positioned relative to Why button */}
-        <View style={[
-          whyPopupStyles.box,
-          {
-            top: buttonPosition.y + buttonPosition.height + 8, // 8px below the button
-            right: 16, // Align with the right edge of screen
-          }
-        ]}>
-          {/* Upward pointing arrow at the top */}
-          <View style={[
-            whyPopupStyles.arrowUp,
-            {
-              right: buttonPosition.width / 2 - 6, // Center the arrow above the Why button
-            }
-          ]} />
-          <Text style={whyPopupStyles.text}>
-            We will automatically{'\n'}
-            fetch your car details{'\n'}
-            based on license{'\n'}
-            number
-          </Text>
-        </View>
-      </TouchableOpacity>
-    </Modal>
-  );
-};
-
-const whyPopupStyles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'transparent',
-  },
-  box: {
-    position: 'absolute',
-    backgroundColor: '#1F2937',
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    maxWidth: 260,
-    shadowColor: '#000',
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 8,
-  },
-  text: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    lineHeight: 20,
-    textAlign: 'center',
-  },
-  arrowUp: {
-    position: 'absolute',
-    top: -6, // Position above the box
-    width: 0,
-    height: 0,
-    borderLeftWidth: 6,
-    borderRightWidth: 6,
-    borderBottomWidth: 6,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: '#1F2937',
-  },
-});
+// Types
+interface DropdownModalProps {
+  visible: boolean;
+  data: string[];
+  title: string;
+  onSelect: (value: string) => void;
+  onClose: () => void;
+}
 
 const UploadRegistrationScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -160,7 +71,6 @@ const UploadRegistrationScreen: React.FC = () => {
   const [carColor, setCarColor] = useState('');
   const [kilometers, setKilometers] = useState(1000);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [showWhyPopup, setShowWhyPopup] = useState(false);
 
   // Dropdown states
   const [showModelDropdown, setShowModelDropdown] = useState(false);
@@ -168,8 +78,7 @@ const UploadRegistrationScreen: React.FC = () => {
   const [showYearDropdown, setShowYearDropdown] = useState(false);
   const [showColorDropdown, setShowColorDropdown] = useState(false);
 
-  // Refs
-  const whyButtonRef = useRef(null);
+  // Animation
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   // Effects
@@ -309,6 +218,13 @@ const UploadRegistrationScreen: React.FC = () => {
     }
   };
 
+  // Custom Thumb Component
+  const CustomThumb = () => (
+    <View style={styles.customThumb}>
+      <View style={styles.customThumbInner} />
+    </View>
+  );
+
   // Render Components
   const renderTabItem = (tab: string, index: number) => (
     <React.Fragment key={index}>
@@ -430,11 +346,7 @@ const UploadRegistrationScreen: React.FC = () => {
           <Text style={[styles.hintText, licenseError && styles.errorText]}>
             {licenseError || 'Please enter in "DL04AN1234" format'}
           </Text>
-          {/* Updated Why Button with ref */}
-          <TouchableOpacity 
-            ref={whyButtonRef}
-            onPress={() => setShowWhyPopup(true)}
-          >
+          <TouchableOpacity>
             <Text style={styles.whyText}>Why?</Text>
           </TouchableOpacity>
         </View>
@@ -573,22 +485,13 @@ const UploadRegistrationScreen: React.FC = () => {
               style={styles.slider}
               minimumValue={1000}
               maximumValue={8000}
-              step={2000}
+              step={1000}
               value={kilometers}
               onValueChange={setKilometers}
               minimumTrackTintColor="transparent"
               maximumTrackTintColor="transparent"
               thumbTintColor="#5900f4ff"
-              renderThumbComponent={() => (
-                <LinearGradient
-                  colors={['#9a6aedc2', '#ad82f7ff']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.thumbOuter}
-                >
-                  <View style={styles.thumbInner} />
-                </LinearGradient>
-              )}
+              thumbStyle={styles.largeThumb}
             />
           </View>
         </View>
@@ -636,18 +539,10 @@ const UploadRegistrationScreen: React.FC = () => {
         onSelect={setCarColor}
         onClose={() => setShowColorDropdown(false)}
       />
-
-      {/* Why Popup Modal - Now sticky to Why button */}
-      <WhyPopup 
-        visible={showWhyPopup}
-        onClose={() => setShowWhyPopup(false)}
-        whyButtonRef={whyButtonRef}
-      />
     </SafeAreaView>
   );
 };
 
-// ... (keep all your existing styles exactly the same)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -926,9 +821,70 @@ const styles = StyleSheet.create({
     minWidth: 30,
     textAlign: 'center',
   },
+  gradientSliderContainer: {
+    position: 'relative',
+    height: 50,
+    justifyContent: 'center',
+    marginTop: 15,
+  },
+  gradientTrack: {
+    position: 'absolute',
+    height: 5,
+    width: '100%',
+    borderRadius: 50,
+    backgroundColor: '#E5E7EB',
+  },
+  dotsContainer: {
+    position: 'absolute',
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#fff',
+    opacity: 0.9,
+  },
   slider: {
     width: '100%',
     height: 40,
+  },
+  largeThumb: {
+    width: 44,             
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#5900f4ff',
+    borderWidth: 6,          
+    borderColor: '#FFFFFF',
+    shadowColor: '#7C3AED',  
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 10,
+  },
+  customThumb: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#5900f4ff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 4,
+    borderColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  customThumbInner: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#FFFFFF',
   },
   bottomSpacing: {
     height: 25,
@@ -994,54 +950,6 @@ const styles = StyleSheet.create({
   dropdownItemText: {
     fontSize: 16,
     color: '#374151',
-  },
-  gradientSliderContainer: {
-    position: 'relative',
-    height: 50,
-    justifyContent: 'center',
-    marginTop: 15,
-  },
-  gradientTrack: {
-    position: 'absolute',
-    height: 5,
-    width: '100%',
-    borderRadius: 50,
-    backgroundColor: '#E5E7EB',
-  },
-  dotsContainer: {
-    position: 'absolute',
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 12,
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#fff',
-    opacity: 0.9,
-  },
-  thumbOuter: {
-    width: 100,
-    height: 100,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: '#fff',
-    backgroundColor: '#7C3AED',
-    shadowColor: '#5910d9',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
-    elevation: 8,
-  },
-  thumbInner: {
-    width: 30,
-    height: 30,
-    borderRadius: 12,
-    backgroundColor: '#FFFFFF',
   },
 });
 
