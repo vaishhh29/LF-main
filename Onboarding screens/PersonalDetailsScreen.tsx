@@ -16,7 +16,8 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
+
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 
 const PersonalDetailsScreen = () => {

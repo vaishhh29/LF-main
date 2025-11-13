@@ -1,58 +1,46 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
+  Image,
+  TouchableOpacity,
   StyleSheet,
   SafeAreaView,
-  TouchableOpacity,
-  StatusBar,
   ScrollView,
-} from 'react-native';
+} from "react-native";
 
 const DriverScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      {/* Back Arrow */}
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Image
+          source={require("./assets/chevron-left.png")}
+          style={styles.backIcon}
+        />
+      </TouchableOpacity>
 
-      {/* Status Bar */}
-      <View style={styles.statusBar}>
-        <Text style={styles.time}>12:30pm</Text>
-        <View style={styles.statusIcons}>
-          <View style={styles.signalBars}>
-            <View style={styles.bar} />
-            <View style={styles.bar} />
-            <View style={styles.bar} />
-            <View style={styles.bar} />
-          </View>
-          <Text style={styles.icon}>📶</Text>
-          <Text style={styles.icon}>🔋</Text>
-        </View>
-      </View>
-
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-        >
-          <Text style={styles.backArrow}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Profile page</Text>
-      </View>
-
-      <ScrollView style={styles.content}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* User Card */}
         <View style={styles.userCard}>
           <View style={styles.userHeader}>
-            <View style={styles.avatar} />
-            <View style={styles.userInfo}>
+            <Image
+              source={require("./assets/avatar1.png")}
+              style={styles.avatar}
+            />
+            <View>
               <Text style={styles.userName}>Ranga raya reddy</Text>
-              <Text style={styles.phoneNumber}>+91 9823478053</Text>
+              <Text style={styles.phoneNumber}>+91 9827473853</Text>
             </View>
           </View>
-          <Text style={styles.memberSince}>Members since july 2017</Text>
-        </View>
 
-        <View style={styles.detailsContainer}>
+          <Text style={styles.memberSince}>Member since July 2017</Text>
+
+          <View style={styles.divider} />
+
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Age</Text>
             <Text style={styles.detailValue}>27</Text>
@@ -60,60 +48,142 @@ const DriverScreen = ({ navigation }) => {
 
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Confirmed email</Text>
-            <Text style={styles.checkMark}>✔</Text>
+            <Image
+              source={require("./assets/check-circle.png")}
+              style={styles.icon}
+            />
           </View>
 
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Confirmed phone number</Text>
-            <Text style={styles.checkMark}>✔</Text>
+            <Image
+              source={require("./assets/check-circle.png")}
+              style={styles.icon}
+            />
           </View>
 
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Trips taken so far</Text>
-            <Text style={styles.detailValue}>16</Text>
+            <Text style={styles.detailValue}>15</Text>
           </View>
         </View>
-
-        <TouchableOpacity
-          style={styles.reportButton}
-          onPress={() => navigation.navigate('ReportItems')}
-        >
-          <Text style={styles.alertIcon}>⚠️</Text>
-          <Text style={styles.reportText}>Report This member</Text>
-        </TouchableOpacity>
+       <TouchableOpacity
+        style={styles.reportContainer}
+      onPress={() => navigation.navigate("ReportItemsScreen")}
+      >
+        <Image
+          source={require("./assets/alert-sign.png")}
+          style={styles.reportIcon}
+        />
+        <Text style={styles.reportText}>Report This Member</Text>
+      </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFFFF' },
-  statusBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8 },
-  time: { fontSize: 12, fontWeight: '500', color: '#000' },
-  statusIcons: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  signalBars: { flexDirection: 'row', gap: 2 },
-  bar: { width: 2, height: 8, backgroundColor: '#000', borderRadius: 2 },
-  icon: { fontSize: 14 },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: '#E5E7EB' },
-  backButton: { marginRight: 16 },
-  backArrow: { fontSize: 24 },
-  headerTitle: { fontSize: 18, fontWeight: '600', color: '#000' },
-  content: { flex: 1, paddingHorizontal: 16, paddingTop: 24 },
-  userCard: { backgroundColor: '#F9FAFB', borderRadius: 12, padding: 16, marginBottom: 24 },
-  userHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
-  avatar: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#F97316', marginRight: 12 },
-  userInfo: { flex: 1 },
-  userName: { fontSize: 16, fontWeight: '600', color: '#000', marginBottom: 2 },
-  phoneNumber: { fontSize: 14, color: '#6B7280' },
-  memberSince: { fontSize: 14, color: '#6B7280' },
-  detailsContainer: { marginBottom: 32 },
-  detailRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
-  detailLabel: { fontSize: 14, color: '#6B7280' },
-  detailValue: { fontSize: 14, fontWeight: '500', color: '#000' },
-  checkMark: { fontSize: 18, color: '#3B82F6' },
-  reportButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, marginTop: 32, gap: 8 },
-  alertIcon: { fontSize: 20 },
-  reportText: { fontSize: 16, fontWeight: '500', color: '#DC2626', marginLeft: 8 },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  backButton: {
+    marginLeft: 20,
+    marginTop: 20,
+  },
+  backIcon: {
+    width: 26,
+    height: 26,
+    tintColor: "#000",
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+  },
+  userCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 20,
+    marginTop: 40,
+    elevation: 2,
+    borderColor:'#E0E0E0'
+  },
+  userHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  avatar: {
+    width: 64,
+    height: 64,
+    borderRadius: 25,
+    marginRight: 12,
+  },
+  userName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#000",
+  },
+  phoneNumber: {
+    fontSize: 14,
+    color: "#000000",
+    marginTop: 2,
+  },
+  memberSince: {
+    fontSize: 15,
+    color: "#000000",
+    marginTop: 6,
+    fontWeight: "600",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#E0E0E0",
+    marginVertical: 16,
+    marginBottom:-3
+  },
+  detailRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 15,
+    alignItems: "center",
+    
+  },
+  detailLabel: {
+    fontSize: 16,
+    color: "#000000",
+    fontWeight: "600",
+    
+  },
+  detailValue: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#000",
+  },
+  icon: {
+    width: 15,
+    height: 15,
+  
+  },
+  reportContainer: {
+    backgroundColor: "#FFF9F9",
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    marginTop: 24,
+  },
+  reportIcon: {
+    width: 18,
+    height: 18,
+    marginRight: 8,
+  },
+  reportText: {
+    fontSize: 18,
+    fontWeight: "500",
+    color: "#000000",
+
+  },
 });
 
 export default DriverScreen;

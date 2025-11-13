@@ -5,7 +5,7 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  StatusBar,
+  Image,
   ScrollView,
 } from 'react-native';
 
@@ -19,53 +19,39 @@ const ReportItemsScreen = ({ navigation }) => {
   ];
 
   const handleReportItemPress = (item) => {
-    navigation.navigate('ReportMethods', { reportType: item });
+    navigation.navigate('ReportMethodsScreen', { reportType: item });
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-
-      {/* Status Bar */}
-      <View style={styles.statusBar}>
-        <Text style={styles.time}>12:30pm</Text>
-        <View style={styles.statusIcons}>
-          <View style={styles.signalBars}>
-            <View style={styles.bar} />
-            <View style={styles.bar} />
-            <View style={styles.bar} />
-            <View style={styles.bar} />
-          </View>
-          <Text style={styles.icon}>📶</Text>
-          <Text style={styles.icon}>🔋</Text>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Image source={require('./assets/chevron-left.png')} style={styles.iconBack} />
+          </TouchableOpacity>
         </View>
-      </View>
 
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-        >
-          <Text style={styles.backArrow}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>report items</Text>
-      </View>
-
-      <ScrollView style={styles.content}>
+        {/* Title */}
         <Text style={styles.pageTitle}>What do you want to report?</Text>
 
-        <View style={styles.itemsContainer}>
+        {/* Card Container */}
+        <View style={styles.card}>
           {reportItems.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.reportItem}
-              onPress={() => handleReportItemPress(item)}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.itemText}>{item}</Text>
-              <Text style={styles.chevron}>›</Text>
-            </TouchableOpacity>
+            <View key={index}>
+              <TouchableOpacity
+                style={styles.reportItem}
+                activeOpacity={0.7}
+                onPress={() => handleReportItemPress(item)}
+              >
+                <Text style={styles.itemText}>{item}</Text>
+                <Text style={styles.chevron}>›</Text>
+              </TouchableOpacity>
+              {index !== reportItems.length - 1 && <View style={styles.divider} />}
+            </View>
           ))}
         </View>
       </ScrollView>
@@ -74,23 +60,61 @@ const ReportItemsScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFFFF' },
-  statusBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8 },
-  time: { fontSize: 12, fontWeight: '500', color: '#000' },
-  statusIcons: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  signalBars: { flexDirection: 'row', gap: 2 },
-  bar: { width: 2, height: 8, backgroundColor: '#000', borderRadius: 2 },
-  icon: { fontSize: 14 },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: '#E5E7EB' },
-  backButton: { marginRight: 16 },
-  backArrow: { fontSize: 24 },
-  headerTitle: { fontSize: 18, fontWeight: '600', color: '#000' },
-  content: { flex: 1, paddingHorizontal: 16, paddingTop: 24 },
-  pageTitle: { fontSize: 20, fontWeight: '600', color: '#000', marginBottom: 24 },
-  itemsContainer: { gap: 12 },
-  reportItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 12, marginBottom: 12 },
-  itemText: { fontSize: 15, color: '#000', flex: 1 },
-  chevron: { fontSize: 20, color: '#9CA3AF' },
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  backButton: {
+    padding: 4,
+  },
+  iconBack: {
+    width: 22,
+    height: 22,
+    resizeMode: 'contain',
+  },
+  pageTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#222',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    overflow: 'hidden',
+  },
+  reportItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 18,
+    paddingHorizontal: 18,
+  },
+  itemText: {
+    fontSize: 16,
+    color: '#000',
+    flex: 1,
+  },
+  chevron: {
+    fontSize: 20,
+    color: '#B0B0B0',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#E0E0E0',
+    marginLeft: 16,
+    marginRight: 16,
+  },
 });
 
 export default ReportItemsScreen;

@@ -435,16 +435,22 @@ const Home = () => {
     <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity>
-          <Text style={styles.iconText}>←</Text>
-        </TouchableOpacity>
+        <View style={styles.card}>
+          <Image
+            source={require('./img/rupee.png')}
+            style={styles.icon}
+          />
+          <View>
+            <Text style={styles.label}>Weekly earnings</Text>
+            <Text style={styles.amount}>630.10</Text>
+          </View>
+        </View>
         <View style={styles.headerRight}>
-          <TouchableOpacity>
-            <Text style={styles.iconText}>☰</Text>
-          </TouchableOpacity>
           <View style={styles.notificationContainer}>
             <TouchableOpacity>
-              <Text style={styles.iconText}>🔔</Text>
+
+              <Image source={require("./img/bell.png")} />
+
             </TouchableOpacity>
             <View style={styles.notificationBadge} />
           </View>
@@ -452,10 +458,7 @@ const Home = () => {
       </View>
 
       {/* Balance */}
-      <View style={styles.balanceCard}>
-        <Text style={styles.balanceLabel}>Available Balance</Text>
-        <Text style={styles.balanceAmount}>₹ 30,510</Text>
-      </View>
+
 
       {/* Status */}
       <View style={styles.statusCard}>
@@ -661,14 +664,37 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#7c3aed',
   },
-  balanceCard: {
-    backgroundColor: '#fff',
-    margin: 20,
-    padding: 20,
-    borderRadius: 12,
+ card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 50,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    alignSelf: 'flex-start',
+
+    // Subtle shadow (like your image)
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  balanceLabel: { fontSize: 12, color: '#6b7280' },
-  balanceAmount: { fontSize: 32, fontWeight: 'bold', color: '#1f2937' },
+  icon: {
+    width: 18,
+    height: 18,
+    marginRight: 8,
+  },
+  label: {
+    fontSize: 11,
+    fontWeight: '500',
+  },
+  amount: {
+    fontSize: 16,
+    color: '#111827',
+    fontWeight: '600',
+    marginTop: 2,
+  },
   statusCard: {
     backgroundColor: '#f3e8ff',
     marginHorizontal: 20,
