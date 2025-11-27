@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "603452160187",
+    "project_id": "lea-flexi",
+    "storage_bucket": "lea-flexi.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:603452160187:android:8ec9eab89e2e7ecb3e519e",
+        "android_client_info": {
+          "package_name": "com.leaflexi.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "603452160187-u89ot1achlgh5h6ml6r0kcieenf5dbcb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.leaflexi.app",
+            "certificate_hash": "2306ac3bf818a0238f69785f53be98a214199853"
+          }
+        },
+        {
+          "client_id": "603452160187-9gf1gmh4d7076np8r6bra3d0a54i1to2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQEwKFs9w1wx-3R5oGz97s6qlL66RGNNg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "603452160187-9gf1gmh4d7076np8r6bra3d0a54i1to2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
