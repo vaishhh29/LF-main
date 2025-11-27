@@ -32,6 +32,7 @@ const SignUpScreen: React.FC = () => {
   const [errorVisible, setErrorVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+
   const showError = (msg: string) => {
     setErrorMessage(msg);
     setErrorVisible(true);
@@ -49,64 +50,47 @@ const SignUpScreen: React.FC = () => {
 
   //  GOOGLE SIGN IN FLOW
   const handleGoogleSignIn = async () => {
-    try {
-      await GoogleSignin.signOut(); 
-      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+  try {
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 
-      const { idToken } = await GoogleSignin.signIn();
+    // Step 1: Sign in Google UI
+    const googleUser = await GoogleSignin.signIn();
 
-      if (!idToken) return showError("Google didn't return a token. Check configuration.");
+    // Step 2: Get Firebase-Compatible Token
+    const { idToken } = await GoogleSignin.getTokens();
 
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-      const userData = await auth().signInWithCredential(googleCredential);
-      const user = userData.user;
-
-      console.log("🔥 SIGNED IN:", user.uid);
-
-      // ----- Create / Update Firestore User -----
-      const userRef = firestore().collection('users').doc(user.uid);
-      const exists = (await userRef.get()).exists;
-
-      await userRef.set(
-        {
-          name: user.displayName || "",
-          email: user.email || "",
-          photoURL: user.photoURL || "",
-          provider: "google",
-          updatedAt: firestore.FieldValue.serverTimestamp(),
-          createdAt: exists ? undefined : firestore.FieldValue.serverTimestamp(),
-        },
-        { merge: true }
-      );
-
-      // ----- Ensure car1 exists -----
-      const carRef = userRef.collection("cars").doc("car1");
-      const carExists = (await carRef.get()).exists;
-
-      if (!carExists) {
-        await carRef.set({
-          createdAt: firestore.FieldValue.serverTimestamp(),
-          personalDetails: {},
-          registrationDetails: {},
-          carImages: {},
-          carDetails: {},
-        });
-      }
-
-      navigation.navigate("HostRegistration", { screen: "BecomeHost" });
-
-    } catch (error: any) {
-      console.log("🔥 GOOGLE ERROR:", error);
-
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) return showError("Sign-in cancelled.");
-      if (error.code === statusCodes.IN_PROGRESS) return showError("Already processing request.");
-      if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE)
-        return showError("Google Play services missing.");
-
-      return showError("Google Sign-In failed. Check configuration.");
+    if (!idToken) {
+      return showError("Google token missing, please try again.");
     }
-  };
+
+    // Step 3: Create Firebase Credential
+    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+    // Step 4: Firebase Sign In
+    const result = await auth().signInWithCredential(googleCredential);
+
+    console.log("🔥 Firebase Auth Success:", result.user.uid);
+
+    // Step 5: Save User to Firestore
+    await firestore().collection("users").doc(result.user.uid).set({
+      name: result.user.displayName || "",
+      email: result.user.email || "",
+      photoURL: result.user.photoURL || "",
+      provider: "google",
+      createdAt: firestore.FieldValue.serverTimestamp(),
+      updatedAt: firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    // Step 6: Navigate
+    navigation.navigate("HostRegistration", { screen: "BecomeHost" });
+
+  } catch (error) {
+    console.log("🔥 GOOGLE ERROR:", error);
+    showError("Google Sign-In failed. Please try again.");
+  }
+};
+
+
 
   // -------------------- PHONE OTP --------------------
   const handleSignUp = async () => {

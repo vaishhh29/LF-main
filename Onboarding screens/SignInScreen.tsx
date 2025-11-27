@@ -47,28 +47,43 @@ const SignInScreen: React.FC = () => {
 
   const handleGoogleSignIn = async () => {
   try {
-    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-  
 
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+
+    // Step 1: Sign in
     const userInfo = await GoogleSignin.signIn();
+
+    // Step 2: Get Firebase-compatible ID token
     const tokens = await GoogleSignin.getTokens();
     const idToken = tokens.idToken;
 
-    navigation.navigate('HostRegistration', { screen: 'BecomeHost' });
+    if (!idToken) return showError("Google token missing. Try again.");
 
-    if (!idToken) throw new Error("No ID token received from Google");
-
+    // Step 3: Convert to Firebase credential
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-    const userSignIn = await auth().signInWithCredential(googleCredential);
 
-    console.log("Signed in user:", userSignIn.user.displayName);
+    const userData = await auth().signInWithCredential(googleCredential);
+    const user = userData.user;
 
-  } catch (error: any) {
-    console.log("Google SignIn Error:", error);
+    console.log("🔥 Firebase Auth Success:", user.uid);
+
+    // ----- Firestore Save -----
+    await firestore().collection('users').doc(user.uid).set({
+      name: user.displayName || "",
+      email: user.email || "",
+      photoURL: user.photoURL || "",
+      provider: "google",
+      createdAt: firestore.FieldValue.serverTimestamp(),
+      updatedAt: firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+
+    navigation.navigate("HostRegistration", { screen: "BecomeHost" });
+
+  } catch (error) {
+    console.log("🔥 GOOGLE ERROR:", error);
+    showError("Google Sign-In failed. Try again.");
   }
 };
-
-
 
   const handleSignIn = async () => {
     if (!phone.trim()) return showError('Please enter your phone number.');

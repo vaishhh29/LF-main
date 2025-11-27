@@ -72,137 +72,174 @@ const PersonalDetailsScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (!user) return;
-    (async () => {
-      try {
-        const doc = await firestore()
-          .collection("users")
-          .doc(user.uid)
-          .collection("cars")
-          .doc("car1")
-          .get();
+  if (!user) return;
 
-        const data = doc.data()?.personalDetails;
-        if (!data) return;
+  const loadData = async () => {
+    try {
+      const doc = await firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("cars")
+        .doc("car1")
+        .get();
 
-        setFirstName(data.firstName || "");
-        setLastName(data.lastName || "");
-        setGender(data.gender || "");
-        setDob(data.dob || "");
-        setContact(data.contact || "");
-        setEmail(data.email || "");
-        setAadharNumber(String(data.aadharNumber || ""));
+      const data = doc.data()?.personalDetails;
+      if (!data) return;
 
-        setProfilePicture(data.profilepic ? { uri: data.profilepic } : null);
-        setFrontSideImage(data.frontAadhar ? { uri: data.frontAadhar } : null);
-        setBackSideImage(data.backAadhar ? { uri: data.backAadhar } : null);
-      } catch (e) {
-        console.log("Error loading existing data:", e);
+      // ------------------------
+      // SAFE IMAGE URL HANDLER
+      // ------------------------
+      const safeUri = (val: string | null) =>
+        val && val.startsWith("http") ? { uri: val } : null;
+
+      // ------------------------
+      // LOAD TEXT VALUES
+      // ------------------------
+      setFirstName(data.firstName || "");
+      setLastName(data.lastName || "");
+      setGender(data.gender || "");
+      setDob(data.dob || "");
+      setContact(data.contact || "");
+      setEmail(data.email || "");
+      setAadharNumber(String(data.aadharNumber || ""));
+
+      // ------------------------
+      // FIXED IMAGE HANDLING
+      // ------------------------
+      setProfilePicture(safeUri(data.profilepic));
+      setFrontSideImage(safeUri(data.frontAadhar));
+      setBackSideImage(safeUri(data.backAadhar));
+
+      // Restore saved location
+      if (data.location) {
+        setLocationData((prev) => ({
+          ...prev,
+          fullAddress: data.fullAddress || prev.fullAddress,
+          landmark: data.landmark || "",
+          plotNo: data.plotNo || "",
+          latitude: data.location.latitude || prev.latitude,
+          longitude: data.location.longitude || prev.longitude,
+        }));
       }
-    })();
-  }, [user]);
+
+    } catch (e) {
+      console.log("Error loading existing data:", e);
+    }
+  };
+
+  loadData();
+}, [user]);
 
   /* ---------------------------
      IMAGE UPLOAD HELPER
   ---------------------------- */
-  const sanitizeImage = async (image: any, folder: string) => {
-    if (!image) return "";
+  const sanitizeImage = async (image: any, folder: string): Promise<string> => {
+  if (!image) return "";
 
-    // If already Firebase URL
-    if (image.uri?.startsWith("http")) return image.uri;
+  // CHECK IF ALREADY STORED URL
+  if (typeof image === "string" && image.startsWith("http")) return image;
+  if (image?.uri?.startsWith("http")) return image.uri;
 
-    try {
-      let fileUri = image.uri;
+  try {
+    let fileUri = image.uri;
 
-      // Fix for Android content:// URIs – copy to temp file first
-      if (fileUri.startsWith("content://")) {
-        const destPath = `${RNFS.TemporaryDirectoryPath}upload_${Date.now()}.jpg`;
-        await RNFS.copyFile(fileUri, destPath);
-        fileUri = `file://${destPath}`;
-      }
-
-      // Ensure file:// prefix
-      if (!fileUri.startsWith("file://")) {
-        fileUri = `file://${fileUri}`;
-      }
-
-      console.log("📌 Uploading From =>", fileUri);
-
-      const filename = `${folder}_${Date.now()}.jpg`;
-      const storageRef = storage().ref(`users/${user?.uid}/${folder}/${filename}`);
-
-      await storageRef.putFile(fileUri);
-      const url = await storageRef.getDownloadURL();
-
-      console.log("✔ Uploaded Firebase URL =>", url);
-      return url;
-    } catch (err: any) {
-      console.log("🔥 Upload Error:", err?.code, err?.message);
-      Alert.alert("Upload Failed", "Unable to upload image. Please try again.");
-      return "";
+    if (fileUri.startsWith("content://")) {
+      const dest = `${RNFS.CachesDirectoryPath}/upload_${Date.now()}.jpg`;
+      await RNFS.copyFile(fileUri, dest);
+      fileUri = `file://${dest}`;
     }
-  };
+
+    if (!fileUri.startsWith("file://")) fileUri = `file://${fileUri}`;
+
+    const fileName = `${folder}_${Date.now()}.jpg`;
+    const storageRef = storage().ref(`users/${user.uid}/${folder}/${fileName}`);
+
+    console.log("📌 Uploading:", fileUri);
+    await storageRef.putFile(fileUri);
+
+    const downloadUrl = await storageRef.getDownloadURL();
+    console.log("✔ Uploaded:", downloadUrl);
+
+    return downloadUrl;
+
+  } catch (err) {
+    console.log("🔥 Upload Failed:", err);
+    return "";
+  }
+};
+
+
 
   /* ---------------------------
      SAVE HANDLER
   ---------------------------- */
   const handleContinue = async () => {
-    if (!user) {
-      Alert.alert("Error", "You are not logged in. Please login again.");
+  setSaving(true);
+
+  try {
+    // Ensure user is logged in
+    const currentUser = auth().currentUser;
+    if (!currentUser) {
+      Alert.alert("Error", "User not authenticated. Please sign in again.");
+      setSaving(false);
       return;
     }
 
+    // Validate fields
     if (!firstName.trim()) {
       Alert.alert("Validation", "Please enter first name");
+      setSaving(false);
       return;
     }
 
-    try {
-      setSaving(true);
+    // Upload Images
+    const profileUrl = await sanitizeImage(profilePicture, "profile");
+    const frontUrl = await sanitizeImage(frontSideImage, "aadhar_front");
+    const backUrl = await sanitizeImage(backSideImage, "aadhar_back");
+    const validUrl = (url: string) => url && url.startsWith("http");
 
-      const profileUrl = await sanitizeImage(profilePicture, "profile");
-      const frontUrl = await sanitizeImage(frontSideImage, "aadhar_front");
-      const backUrl = await sanitizeImage(backSideImage, "aadhar_back");
-
-      await firestore()
-        .collection("users")
-        .doc(user.uid)
-        .collection("cars")
-        .doc("car1")
-        .set(
-          {
-            personalDetails: {
-              firstName,
-              lastName,
-              gender,
-              dob,
-              contact,
-              email,
-              aadharNumber: aadharNumber ? Number(aadharNumber) : null,
-              profilepic: profileUrl,
-              frontAadhar: frontUrl,
-              backAadhar: backUrl,
-              location: new GeoPoint(
-                Number(locationData.latitude),
-                Number(locationData.longitude)
-              ),
-              fullAddress: locationData.fullAddress,
-              landmark: locationData.landmark,
-              plotNo: locationData.plotNo,
-            },
+    // Save to Firestore
+    await firestore()
+      .collection("users")
+      .doc(currentUser.uid)
+      .collection("cars")
+      .doc("car1")
+      .set(
+        {
+          personalDetails: {
+            firstName,
+            lastName,
+            gender,
+            dob,
+            contact,
+            email,
+            aadharNumber: aadharNumber ? Number(aadharNumber) : null,
+            profilepic: validUrl(profileUrl) ? profileUrl : null,
+      frontAadhar: validUrl(frontUrl) ? frontUrl : null,
+      backAadhar: validUrl(backUrl) ? backUrl : null,
+            location: new firestore.GeoPoint(
+              Number(locationData.latitude),
+              Number(locationData.longitude)
+            ),
+            fullAddress: locationData.fullAddress,
+            landmark: locationData.landmark,
+            plotNo: locationData.plotNo,
           },
-          { merge: true }
-        );
+        },
+        { merge: true }
+      );
 
-      Alert.alert("Success", "Personal details saved");
-      navigation.navigate("UploadRegistration" as never);
-    } catch (e) {
-      console.log("Saving Error:", e);
-      Alert.alert("Error", "Unable to save personal details. Please try again.");
-    } finally {
-      setSaving(false);
-    }
-  };
+    Alert.alert("Success", "Personal details saved successfully!");
+    navigation.navigate("UploadRegistration");
+
+  } catch (e) {
+    console.log("Saving Error:", e);
+    Alert.alert("Error", "Unable to save personal details. Please try again.");
+  }
+
+  setSaving(false);
+};
+
 
   /* ---------------------------
      PERMISSIONS + IMAGE PICKERS
